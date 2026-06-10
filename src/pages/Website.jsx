@@ -96,17 +96,36 @@ export default function Website() {
             <span className="text-sm text-muted-foreground font-mono flex-1 truncate">{websiteUrl}</span>
             <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm" className="gap-1.5">
-                <ExternalLink className="w-3.5 h-3.5" /> Öffnen
+                <ExternalLink className="w-3.5 h-3.5" /> Website öffnen
               </Button>
             </a>
           </div>
-          <iframe
-            src={websiteUrl}
-            title="Ihre Website"
-            className="w-full"
-            style={{ height: "500px", border: "none" }}
-            sandbox="allow-scripts allow-same-origin allow-forms"
-          />
+          {/* iframe blocked by most sites (X-Frame-Options) → show screenshot via service */}
+          <div className="relative w-full bg-muted/30" style={{ height: "480px" }}>
+            <img
+              src={`https://api.screenshotmachine.com?key=demo&url=${encodeURIComponent(websiteUrl)}&dimension=1280x800&format=png&cacheLimit=0`}
+              alt="Website Vorschau"
+              className="w-full h-full object-cover object-top"
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "flex";
+              }}
+            />
+            <div className="hidden w-full h-full items-center justify-center flex-col gap-4 text-center p-8">
+              <Globe className="w-12 h-12 text-muted-foreground/50" />
+              <div>
+                <p className="font-medium text-foreground">Vorschau nicht verfügbar</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Klicken Sie auf «Website öffnen» um die Website in einem neuen Tab anzusehen.
+                </p>
+              </div>
+              <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
+                <Button className="gap-2">
+                  <ExternalLink className="w-4 h-4" /> Website öffnen
+                </Button>
+              </a>
+            </div>
+          </div>
         </Card>
       ) : (
         <Card className="mb-8 p-10 text-center">

@@ -8,7 +8,6 @@ import {
   Star,
   FileText,
   Receipt,
-  Zap,
   Menu,
   X,
   Home,
@@ -27,7 +26,6 @@ const NAV = [
   { label: "Bewertungen", path: "/bewertungen", icon: Star },
   { label: "Offerten", path: "/offerten", icon: FileText },
   { label: "Rechnungen", path: "/rechnungen", icon: Receipt },
-  { label: "Automatisierungen", path: "/automatisierungen", icon: Zap },
   { label: "Firma", path: "/firma", icon: Building2 },
 ];
 
