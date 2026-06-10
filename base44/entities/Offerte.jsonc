@@ -59,5 +59,11 @@
       "type": "string"
     }
   },
-  "required": []
+  "required": [
+    "titel",
+    "kunde_id",
+    "datum",
+    "betrag_einmalig",
+    "leistungen"
+  ]
 }
