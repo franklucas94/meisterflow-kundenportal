@@ -1,22 +1,25 @@
-import React, { useState, useRef } from "react";
-import { Globe, ExternalLink, RotateCcw, Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { Globe, ExternalLink, RotateCcw, Loader2, AlertCircle } from "lucide-react";
 
 export default function WebsitePreview({ url }) {
-  const [loading, setLoading] = useState(true);
   const [key, setKey] = useState(0);
-  const iframeRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // Build the proxy URL using the Base44 function endpoint pattern
-  const appId = import.meta.env.VITE_BASE44_APP_ID;
-  const proxyUrl = `/api/functions/${appId}/websiteProxy?url=${encodeURIComponent(url)}`;
+  // Use a free screenshot API - no proxy needed, no iframe issues
+  const screenshotUrl = `https://api.screenshotone.com/take?url=${encodeURIComponent(url)}&viewport_width=1280&viewport_height=900&format=jpg&image_quality=85&cache=true&cache_ttl=3600`;
+
+  // Fallback: use a different free service
+  const fallbackUrl = `https://image.thum.io/get/width/1280/crop/900/noanimate/${url}`;
 
   const handleReload = () => {
     setLoading(true);
+    setError(false);
     setKey((k) => k + 1);
   };
 
   return (
-    <div className="w-full" style={{ height: "540px" }}>
+    <div className="w-full rounded-b-xl overflow-hidden" style={{ height: "540px" }}>
       {/* Browser Chrome */}
       <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 border-b border-border">
         <div className="flex gap-1.5">
@@ -25,13 +28,13 @@ export default function WebsitePreview({ url }) {
           <div className="w-3 h-3 rounded-full bg-emerald-400" />
         </div>
         <div className="flex-1 flex items-center gap-2 bg-background rounded-md px-3 py-1 text-xs text-muted-foreground font-mono border border-border min-w-0">
-          <Globe className="w-3 h-3 shrink-0 text-muted-foreground" />
+          <Globe className="w-3 h-3 shrink-0" />
           <span className="truncate">{url}</span>
         </div>
         <button
           onClick={handleReload}
           className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          title="Neu laden"
+          title="Vorschau aktualisieren"
         >
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
@@ -45,24 +48,41 @@ export default function WebsitePreview({ url }) {
         </a>
       </div>
 
-      {/* iFrame area */}
-      <div className="relative" style={{ height: "calc(540px - 42px)" }}>
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/60 z-10 pointer-events-none">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Website wird geladen…
-            </div>
+      {/* Screenshot area */}
+      <div className="relative bg-white" style={{ height: "calc(540px - 42px)" }}>
+        {loading && !error && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/20 z-10">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground">Screenshot wird geladen…</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Kann bis zu 10 Sekunden dauern</p>
           </div>
         )}
-        <iframe
-          key={key}
-          ref={iframeRef}
-          src={proxyUrl}
-          title="Website Vorschau"
-          className="w-full h-full border-none"
-          onLoad={() => setLoading(false)}
-        />
+
+        {error ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/10">
+            <AlertCircle className="w-8 h-8 text-muted-foreground mb-3" />
+            <p className="text-sm font-medium text-foreground mb-1">Vorschau nicht verfügbar</p>
+            <p className="text-xs text-muted-foreground mb-4">Die Website konnte nicht geladen werden</p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Website direkt öffnen
+            </a>
+          </div>
+        ) : (
+          <img
+            key={key}
+            src={fallbackUrl}
+            alt={`Screenshot von ${url}`}
+            className="w-full h-full object-cover object-top"
+            onLoad={() => setLoading(false)}
+            onError={() => { setLoading(false); setError(true); }}
+          />
+        )}
       </div>
     </div>
   );
