@@ -14,7 +14,7 @@ const SCHRITTE = [
   "Bewertungslink",
 ];
 
-export default function OnboardingLayout({ schritt, kinder }) {
+export default function OnboardingLayout({ schritt, kinder, children }) {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-40 bg-card border-b border-border">
@@ -84,7 +84,7 @@ export default function OnboardingLayout({ schritt, kinder }) {
             />
           </div>
         </div>
-        {kinder}
+        {kinder || children}
       </div>
     </div>
   );
