@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/select";
 import PageHeader from "@/components/PageHeader";
 import TerminDialog from "@/components/forms/TerminDialog";
-import { Plus, Building2, MapPin, Clock, Bell, BellOff, Trash2 } from "lucide-react";
-import { format, isToday, isTomorrow } from "date-fns";
+import TerminEditDialog from "@/components/forms/TerminEditDialog";
+import { Plus, Building2, MapPin, Bell, BellOff, Trash2, FileText } from "lucide-react";
+import { format, isToday, isTomorrow, isThisWeek, isPast, parseISO, startOfDay, getISOWeek } from "date-fns";
 import { de } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 const STATUS_LABELS = {
   geplant: "Geplant",
@@ -24,14 +26,22 @@ const STATUS_LABELS = {
 };
 
 function datumTitel(d) {
-  const date = new Date(d);
+  const date = parseISO(d);
   if (isToday(date)) return "Heute";
   if (isTomorrow(date)) return "Morgen";
   return format(date, "EEEE, dd. MMMM yyyy", { locale: de });
 }
 
+function istVergangen(datum, status) {
+  if (status === "abgeschlossen" || status === "abgesagt") return true;
+  const d = parseISO(datum);
+  return isPast(startOfDay(d)) && !isToday(d);
+}
+
 export default function Termine() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editTermin, setEditTermin] = useState(null);
+  const [offerteTermin, setOfferteTermin] = useState(null);
   const qc = useQueryClient();
 
   const { data: termine = [] } = useQuery({
@@ -57,13 +67,42 @@ export default function Termine() {
     return acc;
   }, {});
 
+  // Mini-Zusammenfassung
+  const heute = termine.filter((t) => isToday(parseISO(t.datum))).length;
+  const dieseWoche = termine.filter((t) => isThisWeek(parseISO(t.datum), { locale: de }) && !isToday(parseISO(t.datum))).length;
+  const naechsteWoche = termine.filter((t) => {
+    const d = parseISO(t.datum);
+    const now = new Date();
+    return getISOWeek(d) === getISOWeek(now) + 1 && d.getFullYear() === now.getFullYear();
+  }).length;
+
+  const handleOfferteErstellen = (t) => {
+    // Navigate to Offerten page with prefilled data via URL params
+    window.location.href = `/offerten?kunde_id=${t.kunde_id || ""}&kunde_name=${encodeURIComponent(t.kunde_name || "")}&titel=${encodeURIComponent(t.titel)}`;
+  };
+
   return (
     <div>
-      <PageHeader title="Termine" subtitle={`${termine.length} Termine im Kalender`}>
+      <PageHeader title="Termine">
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-1.5" /> Neuer Termin
         </Button>
       </PageHeader>
+
+      {/* Mini-Zusammenfassung */}
+      <div className="flex gap-4 mb-6 text-sm">
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-foreground">{heute}</span> Heute
+        </span>
+        <span className="text-muted-foreground">·</span>
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-foreground">{dieseWoche}</span> Diese Woche
+        </span>
+        <span className="text-muted-foreground">·</span>
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-foreground">{naechsteWoche}</span> Nächste Woche
+        </span>
+      </div>
 
       <div className="space-y-7">
         {termine.length === 0 && (
@@ -71,85 +110,141 @@ export default function Termine() {
             Noch keine Termine geplant.
           </Card>
         )}
-        {Object.entries(gruppen).map(([datum, eintraege]) => (
-          <div key={datum}>
-            <h2 className="font-heading font-bold text-sm text-foreground mb-3 uppercase tracking-wide">
-              {datumTitel(datum)}
-            </h2>
-            <div className="space-y-3">
-              {eintraege.map((t) => (
-                <Card key={t.id} className="p-5 hover:shadow-md transition-shadow">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div className="flex items-start gap-4 min-w-0">
-                      <div className="w-14 shrink-0 text-center">
-                        <div className="font-heading font-extrabold text-foreground">
-                          {t.uhrzeit || "–"}
+        {Object.entries(gruppen).map(([datum, eintraege]) => {
+          const istHeute = isToday(parseISO(datum));
+          return (
+            <div key={datum}>
+              {/* Datumsüberschrift – heute blau hervorheben */}
+              <div className={cn(
+                "flex items-center gap-3 mb-3",
+                istHeute && "text-primary"
+              )}>
+                {istHeute && <div className="w-1 h-5 rounded-full bg-primary" />}
+                <h2 className={cn(
+                  "font-heading font-bold text-sm uppercase tracking-wide",
+                  istHeute ? "text-primary" : "text-foreground"
+                )}>
+                  {datumTitel(datum)}
+                </h2>
+                {istHeute && (
+                  <span className="text-[11px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    Heute
+                  </span>
+                )}
+              </div>
+
+              <div className={cn(
+                "space-y-3",
+                istHeute && "pl-4 border-l-2 border-primary/30"
+              )}>
+                {eintraege.map((t) => {
+                  const vergangen = istVergangen(t.datum, t.status);
+                  return (
+                    <Card
+                      key={t.id}
+                      className={cn(
+                        "p-5 hover:shadow-md transition-all cursor-pointer",
+                        vergangen && "opacity-50"
+                      )}
+                      onClick={() => setEditTermin(t)}
+                    >
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4 min-w-0">
+                          <div className="w-14 shrink-0 text-center">
+                            <div className={cn(
+                              "font-heading font-extrabold",
+                              vergangen ? "text-muted-foreground" : "text-foreground"
+                            )}>
+                              {t.uhrzeit || "–"}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground">
+                              {t.dauer_minuten ? `${t.dauer_minuten} Min.` : ""}
+                            </div>
+                          </div>
+                          <div className="w-px self-stretch bg-border" />
+                          <div className="min-w-0 space-y-1">
+                            <p className={cn(
+                              "font-semibold",
+                              vergangen ? "text-muted-foreground" : "text-foreground"
+                            )}>{t.titel}</p>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                              {t.kunde_name && (
+                                <span className="flex items-center gap-1.5">
+                                  <Building2 className="w-3.5 h-3.5" /> {t.kunde_name}
+                                </span>
+                              )}
+                              {t.ort && (
+                                <span className="flex items-center gap-1.5">
+                                  <MapPin className="w-3.5 h-3.5" /> {t.ort}
+                                </span>
+                              )}
+                            </div>
+                            {t.notizen && (
+                              <p className="text-xs text-muted-foreground">{t.notizen}</p>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-[11px] text-muted-foreground">
-                          {t.dauer_minuten ? `${t.dauer_minuten} Min.` : ""}
+
+                        <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {/* Offerte erstellen Schnell-Aktion */}
+                          {t.kunde_id && !vergangen && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs gap-1.5"
+                              onClick={() => handleOfferteErstellen(t)}
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              Offerte
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            title={t.erinnerung ? "Erinnerung aktiv" : "Keine Erinnerung"}
+                            className={t.erinnerung ? "text-primary" : "text-muted-foreground"}
+                            onClick={() => update.mutate({ id: t.id, data: { erinnerung: !t.erinnerung } })}
+                          >
+                            {t.erinnerung ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                          </Button>
+                          <Select
+                            value={t.status}
+                            onValueChange={(status) => update.mutate({ id: t.id, data: { status } })}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(STATUS_LABELS).map(([v, l]) => (
+                                <SelectItem key={v} value={v}>{l}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-destructive"
+                            onClick={() => remove.mutate(t.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
-                      <div className="w-px self-stretch bg-border" />
-                      <div className="min-w-0 space-y-1">
-                        <p className="font-semibold text-foreground">{t.titel}</p>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                          {t.kunde_name && (
-                            <span className="flex items-center gap-1.5">
-                              <Building2 className="w-3.5 h-3.5" /> {t.kunde_name}
-                            </span>
-                          )}
-                          {t.ort && (
-                            <span className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5" /> {t.ort}
-                            </span>
-                          )}
-                        </div>
-                        {t.notizen && (
-                          <p className="text-xs text-muted-foreground">{t.notizen}</p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title={t.erinnerung ? "Erinnerung aktiv" : "Keine Erinnerung"}
-                        className={t.erinnerung ? "text-primary" : "text-muted-foreground"}
-                        onClick={() => update.mutate({ id: t.id, data: { erinnerung: !t.erinnerung } })}
-                      >
-                        {t.erinnerung ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-                      </Button>
-                      <Select
-                        value={t.status}
-                        onValueChange={(status) => update.mutate({ id: t.id, data: { status } })}
-                      >
-                        <SelectTrigger className="w-40">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(STATUS_LABELS).map(([v, l]) => (
-                            <SelectItem key={v} value={v}>{l}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => remove.mutate(t.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <TerminDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <TerminEditDialog
+        termin={editTermin}
+        open={!!editTermin}
+        onOpenChange={(o) => { if (!o) setEditTermin(null); }}
+      />
     </div>
   );
 }
