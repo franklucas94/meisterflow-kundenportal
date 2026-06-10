@@ -12,7 +12,9 @@ import {
   Menu,
   X,
   Home,
+  Building2,
 } from "lucide-react";
+import { useOnboardingGuard } from "@/lib/useOnboardingGuard";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -24,11 +26,13 @@ const NAV = [
   { label: "Offerten", path: "/offerten", icon: FileText },
   { label: "Rechnungen", path: "/rechnungen", icon: Receipt },
   { label: "Automatisierungen", path: "/automatisierungen", icon: Zap },
+  { label: "Firma", path: "/firma", icon: Building2 },
 ];
 
 export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  useOnboardingGuard();
 
   const isActive = (path) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);

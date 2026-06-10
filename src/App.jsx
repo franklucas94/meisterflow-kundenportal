@@ -21,6 +21,8 @@ import Bewertungen from '@/pages/Bewertungen';
 import Offerten from '@/pages/Offerten';
 import Rechnungen from '@/pages/Rechnungen';
 import Automatisierungen from '@/pages/Automatisierungen';
+import Onboarding from '@/pages/Onboarding';
+import FirmaEinstellungen from '@/pages/FirmaEinstellungen';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -53,6 +55,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Uebersicht />} />
           <Route path="/kunden" element={<Kunden />} />
@@ -63,6 +66,7 @@ const AuthenticatedApp = () => {
           <Route path="/offerten" element={<Offerten />} />
           <Route path="/rechnungen" element={<Rechnungen />} />
           <Route path="/automatisierungen" element={<Automatisierungen />} />
+          <Route path="/firma" element={<FirmaEinstellungen />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
