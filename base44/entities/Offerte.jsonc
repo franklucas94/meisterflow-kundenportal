@@ -36,11 +36,27 @@
       ],
       "default": "entwurf"
     },
+    "gueltig_bis": {
+      "type": "string",
+      "format": "date"
+    },
     "leistungen": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "projektstatus": {
+      "type": "string",
+      "enum": [
+        "geplant",
+        "in_bearbeitung",
+        "abgeschlossen"
+      ],
+      "default": "geplant"
+    },
+    "notiz": {
+      "type": "string"
     }
   },
   "required": []

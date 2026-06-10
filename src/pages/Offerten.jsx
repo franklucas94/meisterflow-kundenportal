@@ -15,8 +15,9 @@ import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import OfferteDialog from "@/components/forms/OfferteDialog";
 import { formatCHF, formatDatum } from "@/lib/format";
-import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt } from "lucide-react";
+import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt, FileText, Download } from "lucide-react";
 import { format, addDays } from "date-fns";
+import OfferteEditDialog from "@/components/forms/OfferteEditDialog";
 
 const STATUS_LABELS = {
   entwurf: "Entwurf",
@@ -28,6 +29,7 @@ const STATUS_LABELS = {
 export default function Offerten() {
   const [statusFilter, setStatusFilter] = useState("alle");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editOfferte, setEditOfferte] = useState(null);
   const qc = useQueryClient();
 
   const { data: offerten = [] } = useQuery({
@@ -89,10 +91,10 @@ export default function Offerten() {
           <Card className="p-10 text-center text-muted-foreground text-sm">Keine Offerten gefunden.</Card>
         )}
         {filtered.map((o) => (
-          <Card key={o.id} className="p-5 hover:shadow-md transition-shadow">
+          <Card key={o.id} className="p-5 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setEditOfferte(o)}>
             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
               <div className="space-y-2 min-w-0">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="font-mono text-sm text-muted-foreground">{o.nummer}</span>
                   <StatusBadge status={o.status} />
                 </div>
@@ -107,6 +109,11 @@ export default function Offerten() {
                   <span className="flex items-center gap-1.5">
                     <CreditCard className="w-4 h-4" /> {formatCHF(o.betrag_einmalig)} + {formatCHF(o.betrag_monatlich)}/Mt.
                   </span>
+                  {o.gueltig_bis && (
+                    <span className="text-xs font-medium text-amber-600">
+                      Gültig bis {formatDatum(o.gueltig_bis)}
+                    </span>
+                  )}
                 </div>
                 {o.leistungen?.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -118,8 +125,11 @@ export default function Offerten() {
                     )}
                   </div>
                 )}
+                {o.notiz && (
+                  <p className="text-xs text-muted-foreground italic">Notiz: {o.notiz}</p>
+                )}
               </div>
-              <div className="flex flex-col gap-2 lg:items-end shrink-0">
+              <div className="flex flex-col gap-2 lg:items-end shrink-0" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2">
                   <Select
                     value={o.status}
@@ -138,9 +148,17 @@ export default function Offerten() {
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-destructive"
-                    onClick={() => remove.mutate(o.id)}
+                    onClick={(e) => { e.stopPropagation(); remove.mutate(o.id); }}
                   >
                     <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                  <Button variant="ghost" size="icon" className="w-8 h-8">
+                    <FileText className="w-4 h-4" title="PDF öffnen" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="w-8 h-8">
+                    <Download className="w-4 h-4" title="PDF herunterladen" />
                   </Button>
                 </div>
                 {o.status === "akzeptiert" && (
@@ -149,7 +167,7 @@ export default function Offerten() {
                     size="sm"
                     className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
                     disabled={umwandeln.isPending}
-                    onClick={() => umwandeln.mutate(o)}
+                    onClick={(e) => { e.stopPropagation(); umwandeln.mutate(o); }}
                   >
                     <Receipt className="w-4 h-4 mr-1.5" /> In Rechnung umwandeln
                   </Button>
@@ -161,6 +179,11 @@ export default function Offerten() {
       </div>
 
       <OfferteDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <OfferteEditDialog
+        offerte={editOfferte}
+        open={!!editOfferte}
+        onOpenChange={(o) => { if (!o) setEditOfferte(null); }}
+      />
     </div>
   );
 }
