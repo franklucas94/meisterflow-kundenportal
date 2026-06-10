@@ -13,6 +13,7 @@ import {
   X,
   Home,
   Building2,
+  Globe,
 } from "lucide-react";
 import { useOnboardingGuard } from "@/lib/useOnboardingGuard";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ const NAV = [
   { label: "Kunden", path: "/kunden", icon: Users },
   { label: "Anfragen", path: "/anfragen", icon: Inbox },
   { label: "Termine", path: "/termine", icon: CalendarDays },
+  { label: "Website", path: "/website", icon: Globe },
   { label: "Bewertungen", path: "/bewertungen", icon: Star },
   { label: "Offerten", path: "/offerten", icon: FileText },
   { label: "Rechnungen", path: "/rechnungen", icon: Receipt },

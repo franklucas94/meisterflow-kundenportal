@@ -8,7 +8,6 @@ const SCHRITTE = [
   "Kalender",
   "Google",
   "WhatsApp",
-  "SMS",
   "E-Mail",
   "Dienstleistungen",
   "Bewertungslink",

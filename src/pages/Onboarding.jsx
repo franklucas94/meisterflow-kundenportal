@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const GESAMT_SCHRITTE = 9;
+const GESAMT_SCHRITTE = 8;
 
 const DIENSTLEISTUNGEN_VORGABEN = [
   "Dachdecker", "Maler", "Elektriker", "Sanitär/Heizung", "Gartenbau",
@@ -282,13 +282,13 @@ export default function Onboarding() {
               ))}
             </div>
             {form.kalender_verbunden && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" strokeWidth={3} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-emerald-700">Kalender verbunden</p>
-                  <p className="text-xs text-emerald-600">MeisterFlow kann jetzt Termine verwalten und Erinnerungen senden.</p>
+                  <p className="text-sm font-semibold text-blue-700">Kalender vorgemerkt: {form.kalender_verbunden === "google" ? "Google Kalender" : form.kalender_verbunden === "microsoft365" ? "Microsoft 365" : "Microsoft Outlook"}</p>
+                  <p className="text-xs text-blue-600">Unser Team wird die Verbindung gemeinsam mit Ihnen einrichten.</p>
                 </div>
               </div>
             )}
@@ -328,13 +328,13 @@ export default function Onboarding() {
               onSelect={() => setForm({ ...form, google_verbunden: !form.google_verbunden })}
             />
             {form.google_verbunden && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" strokeWidth={3} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-emerald-700">Google Konto verbunden</p>
-                  <p className="text-xs text-emerald-600">Automatische Bewertungsanfragen, SEO Reports und Rankings sind jetzt möglich.</p>
+                  <p className="text-sm font-semibold text-blue-700">Google vorgemerkt</p>
+                  <p className="text-xs text-blue-600">Unser Team wird die Google-Verbindung gemeinsam mit Ihnen einrichten.</p>
                 </div>
               </div>
             )}
@@ -407,65 +407,13 @@ export default function Onboarding() {
 
     6: (
       <SchrittCard
-        titel="SMS verbinden"
-        untertitel="Senden Sie SMS-Erinnerungen direkt aus MeisterFlow."
-        icon={MessageSquare}
-        saving={saving}
-        ueberspringen
-        onUeberspringen={() => weiter()}
-        onZurueck={() => setSchritt(5)}
-        onWeiter={() => weiter()}
-        kinder={
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <IntegrationKarte
-                name="Eigene Nummer verwenden"
-                beschreibung="Verbinden Sie Ihre bestehende Geschäftsnummer"
-                icon={<MessageSquare className="w-6 h-6 text-violet-600" />}
-                selected={form.sms_verbunden && !form.sms_meisterflow_nummer}
-                verbunden={form.sms_verbunden && !form.sms_meisterflow_nummer}
-                onSelect={() => setForm({ ...form, sms_verbunden: true, sms_meisterflow_nummer: false })}
-              />
-              <IntegrationKarte
-                name="MeisterFlow Nummer"
-                beschreibung="Verwenden Sie eine von MeisterFlow bereitgestellte Nummer"
-                icon={<div className="w-6 h-6 rounded bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center"><MessageSquare className="w-3.5 h-3.5 text-white" /></div>}
-                selected={form.sms_meisterflow_nummer}
-                verbunden={form.sms_meisterflow_nummer}
-                onSelect={() => setForm({ ...form, sms_verbunden: true, sms_meisterflow_nummer: true })}
-              />
-            </div>
-            {form.sms_verbunden && !form.sms_meisterflow_nummer && (
-              <div className="space-y-1.5">
-                <Label>Ihre Telefonnummer (SMS-fähig)</Label>
-                <Input value={form.sms_eigene_nummer} onChange={f("sms_eigene_nummer")} placeholder="+41 44 123 45 67" />
-              </div>
-            )}
-            {form.sms_meisterflow_nummer && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-white" strokeWidth={3} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-emerald-700">MeisterFlow Nummer aktiviert</p>
-                  <p className="text-xs text-emerald-600">Eine dedizierte Schweizer Nummer wird für Sie reserviert.</p>
-                </div>
-              </div>
-            )}
-          </>
-        }
-      />
-    ),
-
-    7: (
-      <SchrittCard
         titel="E-Mail verbinden"
         untertitel="Senden Sie Offerten, Rechnungen und Nachfassungen direkt aus MeisterFlow."
         icon={Mail}
         saving={saving}
         ueberspringen
         onUeberspringen={() => weiter()}
-        onZurueck={() => setSchritt(6)}
+        onZurueck={() => setSchritt(5)}
         onWeiter={() => weiter()}
         kinder={
           <>
@@ -493,13 +441,13 @@ export default function Onboarding() {
                   <Label>E-Mail-Adresse</Label>
                   <Input type="email" value={form.email_verbunden_adresse} onChange={f("email_verbunden_adresse")} placeholder="info@meinefirma.ch" />
                 </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
                     <Check className="w-4 h-4 text-white" strokeWidth={3} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-emerald-700">E-Mail verbunden</p>
-                    <p className="text-xs text-emerald-600">Offerten, Rechnungen und Nachfassungen können jetzt versendet werden.</p>
+                    <p className="text-sm font-semibold text-blue-700">E-Mail vorgemerkt</p>
+                    <p className="text-xs text-blue-600">Unser Team richtet die E-Mail-Anbindung gemeinsam mit Ihnen ein.</p>
                   </div>
                 </div>
               </div>
@@ -509,7 +457,7 @@ export default function Onboarding() {
       />
     ),
 
-    8: (
+    7: (
       <SchrittCard
         titel="Dienstleistungen"
         untertitel="Was bietet Ihr Betrieb an? Diese Daten werden für Offerten, Formulare und KI-Assistenten verwendet."
@@ -517,7 +465,7 @@ export default function Onboarding() {
         saving={saving}
         ueberspringen
         onUeberspringen={() => weiter()}
-        onZurueck={() => setSchritt(7)}
+        onZurueck={() => setSchritt(6)}
         onWeiter={() => weiter()}
         kinder={
           <>
@@ -578,14 +526,14 @@ export default function Onboarding() {
       />
     ),
 
-    9: (
+    8: (
       <SchrittCard
         titel="Bewertungslink"
         untertitel="Fügen Sie Ihren Google Bewertungslink ein – das Bewertungssystem ist dann sofort aktiv."
         icon={Star}
         saving={saving}
         weiterText="Einrichtung abschliessen"
-        onZurueck={() => setSchritt(8)}
+        onZurueck={() => setSchritt(7)}
         onWeiter={() => weiter()}
         kinder={
           <>
