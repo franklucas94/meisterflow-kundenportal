@@ -1,12 +1,26 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from '@/components/ProtectedRoute';
 // Add page imports here
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import Layout from '@/components/Layout';
+import Uebersicht from '@/pages/Uebersicht';
+import Kunden from '@/pages/Kunden';
+import KundenDetail from '@/pages/KundenDetail';
+import Anfragen from '@/pages/Anfragen';
+import Termine from '@/pages/Termine';
+import Bewertungen from '@/pages/Bewertungen';
+import Offerten from '@/pages/Offerten';
+import Rechnungen from '@/pages/Rechnungen';
+import Automatisierungen from '@/pages/Automatisierungen';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +48,23 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Uebersicht />} />
+          <Route path="/kunden" element={<Kunden />} />
+          <Route path="/kunden/:id" element={<KundenDetail />} />
+          <Route path="/anfragen" element={<Anfragen />} />
+          <Route path="/termine" element={<Termine />} />
+          <Route path="/bewertungen" element={<Bewertungen />} />
+          <Route path="/offerten" element={<Offerten />} />
+          <Route path="/rechnungen" element={<Rechnungen />} />
+          <Route path="/automatisierungen" element={<Automatisierungen />} />
+        </Route>
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -47,7 +77,6 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
-          <ScrollToTop />
           <AuthenticatedApp />
         </Router>
         <Toaster />

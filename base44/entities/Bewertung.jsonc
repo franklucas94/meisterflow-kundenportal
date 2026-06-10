@@ -1,0 +1,36 @@
+{
+  "name": "Bewertung",
+  "type": "object",
+  "properties": {
+    "kunde_id": {
+      "type": "string"
+    },
+    "kunde_name": {
+      "type": "string"
+    },
+    "typ": {
+      "type": "string",
+      "enum": [
+        "google",
+        "intern"
+      ],
+      "default": "google"
+    },
+    "sterne": {
+      "type": "number"
+    },
+    "kommentar": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "angefragt",
+        "erhalten",
+        "beantwortet"
+      ],
+      "default": "angefragt"
+    }
+  },
+  "required": []
+}

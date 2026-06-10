@@ -1,0 +1,47 @@
+{
+  "name": "Offerte",
+  "type": "object",
+  "properties": {
+    "nummer": {
+      "type": "string"
+    },
+    "titel": {
+      "type": "string"
+    },
+    "kunde_id": {
+      "type": "string"
+    },
+    "kunde_name": {
+      "type": "string"
+    },
+    "datum": {
+      "type": "string",
+      "format": "date"
+    },
+    "betrag_einmalig": {
+      "type": "number",
+      "default": 0
+    },
+    "betrag_monatlich": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "entwurf",
+        "gesendet",
+        "akzeptiert",
+        "abgelehnt"
+      ],
+      "default": "entwurf"
+    },
+    "leistungen": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": []
+}
