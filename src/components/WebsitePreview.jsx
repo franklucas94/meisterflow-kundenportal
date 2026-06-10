@@ -4,23 +4,18 @@ import { Globe, ExternalLink, RotateCcw, Loader2 } from "lucide-react";
 
 export default function WebsitePreview({ url }) {
   const [loading, setLoading] = useState(true);
-  const [blocked, setBlocked] = useState(false);
   const iframeRef = useRef(null);
-
-  // Use allorigins proxy to bypass X-Frame-Options
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
 
   const handleReload = () => {
     setLoading(true);
-    setBlocked(false);
     if (iframeRef.current) {
-      iframeRef.current.src = proxyUrl;
+      iframeRef.current.src = url;
     }
   };
 
   return (
-    <div className="relative w-full bg-muted/10" style={{ height: "520px" }}>
-      {/* Browser chrome bar */}
+    <div className="w-full" style={{ height: "520px" }}>
+      {/* Browser-Chrome */}
       <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 border-b border-border">
         <div className="flex gap-1.5">
           <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -45,44 +40,24 @@ export default function WebsitePreview({ url }) {
         </a>
       </div>
 
-      {/* Loading overlay */}
-      {loading && !blocked && (
-        <div className="absolute inset-0 top-10 flex items-center justify-center bg-background/80 z-10">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Seite wird geladen…
+      {/* Ladeindikator */}
+      <div className="relative" style={{ height: "calc(520px - 42px)" }}>
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted/10 z-10 pointer-events-none">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Wird geladen…
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Blocked fallback */}
-      {blocked && (
-        <div className="absolute inset-0 top-10 flex flex-col items-center justify-center gap-4 text-center p-8 bg-background z-10">
-          <Globe className="w-12 h-12 text-muted-foreground/30" />
-          <div>
-            <p className="font-semibold text-foreground">Vorschau blockiert</p>
-            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-              Diese Website erlaubt keine eingebettete Vorschau. Öffnen Sie sie direkt.
-            </p>
-          </div>
-          <a href={url} target="_blank" rel="noopener noreferrer">
-            <Button className="gap-2">
-              <ExternalLink className="w-4 h-4" /> Website öffnen
-            </Button>
-          </a>
-        </div>
-      )}
-
-      {/* iframe */}
-      <iframe
-        ref={iframeRef}
-        src={proxyUrl}
-        title="Website Vorschau"
-        className="w-full border-none"
-        style={{ height: "calc(100% - 42px)" }}
-        onLoad={() => setLoading(false)}
-        onError={() => { setLoading(false); setBlocked(true); }}
-      />
+        )}
+        <iframe
+          ref={iframeRef}
+          src={url}
+          title="Website Vorschau"
+          className="w-full h-full border-none"
+          onLoad={() => setLoading(false)}
+        />
+      </div>
     </div>
   );
 }

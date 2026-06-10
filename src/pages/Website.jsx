@@ -92,16 +92,6 @@ export default function Website() {
       {/* Website Vorschau */}
       {websiteUrl ? (
         <Card className="mb-8 overflow-hidden">
-          <div className="flex items-center gap-3 px-5 py-3 border-b border-border bg-muted/40">
-            <Globe className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground font-mono flex-1 truncate">{websiteUrl}</span>
-            <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <ExternalLink className="w-3.5 h-3.5" /> Website öffnen
-              </Button>
-            </a>
-          </div>
-          {/* Website preview via iframe with fallback */}
           <WebsitePreview url={websiteUrl} />
         </Card>
       ) : (
