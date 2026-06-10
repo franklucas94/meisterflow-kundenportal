@@ -1,17 +1,14 @@
 import React, { useState, useRef } from "react";
 import { Globe, ExternalLink, RotateCcw, Loader2 } from "lucide-react";
-import { appParams } from "@/lib/app-params";
 
 export default function WebsitePreview({ url }) {
   const [loading, setLoading] = useState(true);
-  const [key, setKey] = useState(0); // force iframe reload
+  const [key, setKey] = useState(0);
   const iframeRef = useRef(null);
 
-  // Build proxy URL via our backend function
-  const fnBase = appParams.appBaseUrl
-    ? `${appParams.appBaseUrl}/api/functions/${appParams.appId}/websiteProxy`
-    : `/api/functions/${appParams.appId}/websiteProxy`;
-  const proxyUrl = `${fnBase}?url=${encodeURIComponent(url)}`;
+  // Build the proxy URL using the Base44 function endpoint pattern
+  const appId = import.meta.env.VITE_BASE44_APP_ID;
+  const proxyUrl = `/api/functions/${appId}/websiteProxy?url=${encodeURIComponent(url)}`;
 
   const handleReload = () => {
     setLoading(true);

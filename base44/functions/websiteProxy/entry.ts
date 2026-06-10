@@ -1,4 +1,16 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+
 Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+      },
+    });
+  }
+
   const urlParams = new URL(req.url).searchParams;
   const targetUrl = urlParams.get("url");
 
@@ -20,11 +32,12 @@ Deno.serve(async (req) => {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "de-CH,de;q=0.9,en;q=0.8",
       },
+      redirect: "follow",
     });
 
     const contentType = response.headers.get("content-type") || "text/html";
 
-    // For non-HTML resources (CSS, images, JS) — proxy them directly
+    // For non-HTML resources — proxy them directly
     if (!contentType.includes("text/html")) {
       const body = await response.arrayBuffer();
       return new Response(body, {
@@ -39,18 +52,10 @@ Deno.serve(async (req) => {
     let html = await response.text();
     const base = `${parsedBase.protocol}//${parsedBase.host}`;
 
-    // Rewrite relative URLs to absolute so assets load correctly
-    html = html
-      // href="/path" → href="https://domain.com/path"
-      .replace(/(\s(?:href|src|action|data-src)=["'])\/(?!\/)/g, `$1${base}/`)
-      // href="//domain" → href="https://domain"
-      .replace(/(\s(?:href|src|action|data-src)=["'])\/\//g, `$1${parsedBase.protocol}//`)
-      // CSS url(/path)
-      .replace(/url\(["']?\/(?!\/)/g, `url(${base}/`)
-      // Inject <base> tag so relative links work
-      .replace(/<head([^>]*)>/i, `<head$1><base href="${base}/">`);
+    // Inject <base> tag so all relative links resolve correctly
+    html = html.replace(/<head([^>]*)>/i, `<head$1><base href="${base}/">`);
 
-    // Remove any existing X-Frame-Options meta tags
+    // Remove existing X-Frame-Options meta tags
     html = html.replace(/<meta[^>]*x-frame-options[^>]*>/gi, "");
 
     return new Response(html, {
@@ -58,7 +63,6 @@ Deno.serve(async (req) => {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
         "Access-Control-Allow-Origin": "*",
-        // Explicitly do NOT set X-Frame-Options so the iframe can embed it
       },
     });
   } catch (error) {
