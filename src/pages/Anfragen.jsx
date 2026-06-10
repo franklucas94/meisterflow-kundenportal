@@ -14,6 +14,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import AnfrageDialog from "@/components/forms/AnfrageDialog";
+import AnfrageEditDialog from "@/components/forms/AnfrageEditDialog";
 import { formatDatum } from "@/lib/format";
 import { Plus, Building2, Clock, Trash2, StickyNote, BellRing } from "lucide-react";
 
@@ -38,6 +39,7 @@ const STATUS_LABELS = {
 export default function Anfragen() {
   const [statusFilter, setStatusFilter] = useState("alle");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editAnfrage, setEditAnfrage] = useState(null);
   const qc = useQueryClient();
 
   const { data: anfragen = [] } = useQuery({
@@ -81,7 +83,7 @@ export default function Anfragen() {
           <Card className="p-10 text-center text-muted-foreground text-sm">Keine Anfragen gefunden.</Card>
         )}
         {filtered.map((a) => (
-          <Card key={a.id} className="p-5 hover:shadow-md transition-shadow">
+          <Card key={a.id} className="p-5 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setEditAnfrage(a)}>
             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
               <div className="space-y-2 min-w-0">
                 <div className="flex items-center gap-2.5 flex-wrap">
@@ -115,7 +117,7 @@ export default function Anfragen() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                 <Select
                   value={a.status}
                   onValueChange={(status) => update.mutate({ id: a.id, data: { status } })}
@@ -133,7 +135,7 @@ export default function Anfragen() {
                   variant="ghost"
                   size="icon"
                   className="text-muted-foreground hover:text-destructive"
-                  onClick={() => remove.mutate(a.id)}
+                  onClick={(e) => { e.stopPropagation(); remove.mutate(a.id); }}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -144,6 +146,11 @@ export default function Anfragen() {
       </div>
 
       <AnfrageDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <AnfrageEditDialog
+        anfrage={editAnfrage}
+        open={!!editAnfrage}
+        onOpenChange={(o) => { if (!o) setEditAnfrage(null); }}
+      />
     </div>
   );
 }
