@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -16,9 +16,17 @@ import {
   Receipt,
   Star,
   StickyNote,
+  TrendingUp,
 } from "lucide-react";
+import {
+  AnfrageDetailDialog,
+  TerminDetailDialog,
+  OfferteDetailDialog,
+  RechnungDetailDialog,
+  BewertungDetailDialog,
+} from "@/components/DetailDialog";
 
-function HistorieSektion({ titel, icon: Icon, eintraege, leerText }) {
+function HistorieSektion({ titel, icon: Icon, eintraege, leerText, onKlick }) {
   return (
     <Card>
       <div className="px-5 py-4 border-b border-border flex items-center gap-2">
@@ -31,13 +39,17 @@ function HistorieSektion({ titel, icon: Icon, eintraege, leerText }) {
           <p className="px-5 py-4 text-sm text-muted-foreground">{leerText}</p>
         )}
         {eintraege.map((e) => (
-          <div key={e.id} className="px-5 py-3 flex items-center justify-between gap-3">
+          <button
+            key={e.id}
+            onClick={() => onKlick(e.raw)}
+            className="w-full px-5 py-3 flex items-center justify-between gap-3 hover:bg-muted/40 transition-colors text-left"
+          >
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{e.text}</p>
               {e.sub && <p className="text-xs text-muted-foreground">{e.sub}</p>}
             </div>
             <StatusBadge status={e.status} />
-          </div>
+          </button>
         ))}
       </div>
     </Card>
@@ -46,6 +58,9 @@ function HistorieSektion({ titel, icon: Icon, eintraege, leerText }) {
 
 export default function KundenDetail() {
   const { id } = useParams();
+
+  const [dialog, setDialog] = useState({ typ: null, item: null });
+  const schliessen = () => setDialog({ typ: null, item: null });
 
   const { data: kunden = [] } = useQuery({
     queryKey: ["kunde", id],
@@ -66,10 +81,13 @@ export default function KundenDetail() {
   const { data: rechnungen } = useFiltered("kunde-rechnungen", "Rechnung");
   const { data: bewertungen } = useFiltered("kunde-bewertungen", "Bewertung");
 
+  // Umsatz = Summe aller bezahlten Rechnungen + akzeptierte Offerten (einmalig)
+  const umsatz = rechnungen
+    .filter((r) => r.status === "bezahlt")
+    .reduce((sum, r) => sum + (r.betrag || 0), 0);
+
   if (!kunde) {
-    return (
-      <div className="text-sm text-muted-foreground">Kunde wird geladen…</div>
-    );
+    return <div className="text-sm text-muted-foreground">Kunde wird geladen…</div>;
   }
 
   return (
@@ -100,6 +118,7 @@ export default function KundenDetail() {
 
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="space-y-5">
+          {/* Kontaktinformationen */}
           <Card className="p-5">
             <h3 className="font-heading font-bold text-sm text-foreground mb-4">
               Kontaktinformationen
@@ -129,6 +148,7 @@ export default function KundenDetail() {
             </div>
           </Card>
 
+          {/* Notizen */}
           {kunde.notizen && (
             <Card className="p-5">
               <h3 className="font-heading font-bold text-sm text-foreground mb-3 flex items-center gap-2">
@@ -137,41 +157,87 @@ export default function KundenDetail() {
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{kunde.notizen}</p>
             </Card>
           )}
+
+          {/* Umsatz */}
+          <Card className="p-5">
+            <h3 className="font-heading font-bold text-sm text-foreground mb-3 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary" /> Umsatz
+            </h3>
+            <p className="text-2xl font-extrabold font-heading text-foreground">
+              {formatCHF(umsatz)}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {rechnungen.filter((r) => r.status === "bezahlt").length} bezahlte Rechnung{rechnungen.filter((r) => r.status === "bezahlt").length !== 1 ? "en" : ""}
+            </p>
+          </Card>
         </div>
 
+        {/* Historien */}
         <div className="lg:col-span-2 space-y-5">
           <HistorieSektion
             titel="Anfragen"
             icon={Inbox}
             leerText="Keine Anfragen vorhanden."
-            eintraege={anfragen.map((a) => ({ id: a.id, text: a.betreff, sub: formatDatum(a.created_date), status: a.status }))}
+            onKlick={(item) => setDialog({ typ: "anfrage", item })}
+            eintraege={anfragen.map((a) => ({ id: a.id, raw: a, text: a.betreff, sub: formatDatum(a.created_date), status: a.status }))}
           />
           <HistorieSektion
             titel="Termine"
             icon={CalendarDays}
             leerText="Keine Termine vorhanden."
-            eintraege={termine.map((t) => ({ id: t.id, text: t.titel, sub: `${formatDatum(t.datum)} · ${t.uhrzeit || ""}`, status: t.status }))}
+            onKlick={(item) => setDialog({ typ: "termin", item })}
+            eintraege={termine.map((t) => ({ id: t.id, raw: t, text: t.titel, sub: `${formatDatum(t.datum)} · ${t.uhrzeit || ""}`, status: t.status }))}
           />
           <HistorieSektion
             titel="Offerten"
             icon={FileText}
             leerText="Keine Offerten vorhanden."
-            eintraege={offerten.map((o) => ({ id: o.id, text: `${o.nummer} – ${o.titel || ""}`, sub: `${formatDatum(o.datum)} · ${formatCHF(o.betrag_einmalig)} + ${formatCHF(o.betrag_monatlich)}/Mt.`, status: o.status }))}
+            onKlick={(item) => setDialog({ typ: "offerte", item })}
+            eintraege={offerten.map((o) => ({ id: o.id, raw: o, text: `${o.nummer} – ${o.titel || ""}`, sub: `${formatDatum(o.datum)} · ${formatCHF(o.betrag_einmalig)} + ${formatCHF(o.betrag_monatlich)}/Mt.`, status: o.status }))}
           />
           <HistorieSektion
             titel="Rechnungen"
             icon={Receipt}
             leerText="Keine Rechnungen vorhanden."
-            eintraege={rechnungen.map((r) => ({ id: r.id, text: `${r.nummer} – ${r.titel || ""}`, sub: `${formatDatum(r.datum)} · ${formatCHF(r.betrag)}`, status: r.status }))}
+            onKlick={(item) => setDialog({ typ: "rechnung", item })}
+            eintraege={rechnungen.map((r) => ({ id: r.id, raw: r, text: `${r.nummer} – ${r.titel || ""}`, sub: `${formatDatum(r.datum)} · ${formatCHF(r.betrag)}`, status: r.status }))}
           />
           <HistorieSektion
             titel="Bewertungen"
             icon={Star}
             leerText="Keine Bewertungen vorhanden."
-            eintraege={bewertungen.map((b) => ({ id: b.id, text: b.sterne ? `${"★".repeat(b.sterne)}${"☆".repeat(5 - b.sterne)}` : "Bewertung angefragt", sub: b.kommentar, status: b.status }))}
+            onKlick={(item) => setDialog({ typ: "bewertung", item })}
+            eintraege={bewertungen.map((b) => ({ id: b.id, raw: b, text: b.sterne ? `${"★".repeat(b.sterne)}${"☆".repeat(5 - b.sterne)}` : "Bewertung angefragt", sub: b.kommentar, status: b.status }))}
           />
         </div>
       </div>
+
+      {/* Detail Dialoge */}
+      <AnfrageDetailDialog
+        anfrage={dialog.typ === "anfrage" ? dialog.item : null}
+        open={dialog.typ === "anfrage"}
+        onOpenChange={schliessen}
+      />
+      <TerminDetailDialog
+        termin={dialog.typ === "termin" ? dialog.item : null}
+        open={dialog.typ === "termin"}
+        onOpenChange={schliessen}
+      />
+      <OfferteDetailDialog
+        offerte={dialog.typ === "offerte" ? dialog.item : null}
+        open={dialog.typ === "offerte"}
+        onOpenChange={schliessen}
+      />
+      <RechnungDetailDialog
+        rechnung={dialog.typ === "rechnung" ? dialog.item : null}
+        open={dialog.typ === "rechnung"}
+        onOpenChange={schliessen}
+      />
+      <BewertungDetailDialog
+        bewertung={dialog.typ === "bewertung" ? dialog.item : null}
+        open={dialog.typ === "bewertung"}
+        onOpenChange={schliessen}
+      />
     </div>
   );
 }
