@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Input } from "@/components/ui/input";
@@ -9,14 +9,18 @@ import { format } from "date-fns";
 
 const LEER = { titel: "", kunde_id: "", kunde_name: "", datum: format(new Date(), "yyyy-MM-dd"), betrag_einmalig: 0, betrag_monatlich: 0, status: "entwurf", leistungenText: "" };
 
-export default function OfferteDialog({ open, onOpenChange }) {
-  const [form, setForm] = useState(LEER);
+export default function OfferteDialog({ open, onOpenChange, prefill = {} }) {
+  const [form, setForm] = useState({ ...LEER, ...prefill });
   const qc = useQueryClient();
 
   const { data: offerten = [] } = useQuery({
     queryKey: ["offerten"],
     queryFn: () => base44.entities.Offerte.list("-created_date", 500),
   });
+
+  useEffect(() => {
+    if (open) setForm({ ...LEER, ...prefill });
+  }, [open]);
 
   const create = useMutation({
     mutationFn: (f) => {

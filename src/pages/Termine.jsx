@@ -13,6 +13,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import TerminDialog from "@/components/forms/TerminDialog";
 import TerminEditDialog from "@/components/forms/TerminEditDialog";
+import OfferteDialog from "@/components/forms/OfferteDialog";
 import { Plus, Building2, MapPin, Bell, BellOff, Trash2, FileText } from "lucide-react";
 import { format, isToday, isTomorrow, isThisWeek, isPast, parseISO, startOfDay, getISOWeek } from "date-fns";
 import { de } from "date-fns/locale";
@@ -41,7 +42,7 @@ function istVergangen(datum, status) {
 export default function Termine() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTermin, setEditTermin] = useState(null);
-  const [offerteTermin, setOfferteTermin] = useState(null);
+  const [offertePrefill, setOffertePrefill] = useState(null);
   const qc = useQueryClient();
 
   const { data: termine = [] } = useQuery({
@@ -58,9 +59,14 @@ export default function Termine() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["termine"] }),
   });
 
-  const sortiert = [...termine].sort((a, b) =>
-    `${a.datum} ${a.uhrzeit || ""}`.localeCompare(`${b.datum} ${b.uhrzeit || ""}`)
-  );
+  // Zukünftige/heutige oben (neuste zuerst), vergangene ganz unten (neuste zuerst)
+  const sortiert = [...termine].sort((a, b) => {
+    const aVerg = istVergangen(a.datum, a.status);
+    const bVerg = istVergangen(b.datum, b.status);
+    if (aVerg !== bVerg) return aVerg ? 1 : -1; // vergangene nach unten
+    // innerhalb gleicher Gruppe: absteigend (neuste oben)
+    return `${b.datum} ${b.uhrzeit || ""}`.localeCompare(`${a.datum} ${a.uhrzeit || ""}`);
+  });
 
   const gruppen = sortiert.reduce((acc, t) => {
     (acc[t.datum] = acc[t.datum] || []).push(t);
@@ -77,8 +83,11 @@ export default function Termine() {
   }).length;
 
   const handleOfferteErstellen = (t) => {
-    // Navigate to Offerten page with prefilled data via URL params
-    window.location.href = `/offerten?kunde_id=${t.kunde_id || ""}&kunde_name=${encodeURIComponent(t.kunde_name || "")}&titel=${encodeURIComponent(t.titel)}`;
+    setOffertePrefill({
+      kunde_id: t.kunde_id || "",
+      kunde_name: t.kunde_name || "",
+      titel: t.titel || "",
+    });
   };
 
   return (
@@ -244,6 +253,11 @@ export default function Termine() {
         termin={editTermin}
         open={!!editTermin}
         onOpenChange={(o) => { if (!o) setEditTermin(null); }}
+      />
+      <OfferteDialog
+        open={!!offertePrefill}
+        onOpenChange={(o) => { if (!o) setOffertePrefill(null); }}
+        prefill={offertePrefill || {}}
       />
     </div>
   );
