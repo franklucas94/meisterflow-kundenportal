@@ -16,7 +16,8 @@ import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import RechnungDialog from "@/components/forms/RechnungDialog";
 import { formatCHF, formatDatum } from "@/lib/format";
-import { Plus, Building2, CalendarDays, Trash2, Zap } from "lucide-react";
+import { Plus, Building2, CalendarDays, Trash2, Zap, FileDown } from "lucide-react";
+import { generateProfessionalRechnung } from "@/lib/generateProfessionalRechnung";
 
 const STATUS_LABELS = {
   offen: "Offen",
@@ -36,6 +37,16 @@ export default function Rechnungen() {
     queryFn: () => base44.entities.Rechnung.list("-created_date", 500),
   });
 
+  const { data: firma } = useQuery({
+    queryKey: ["firma"],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      if (!user) return null;
+      const firmen = await base44.entities.Firma.filter({ user_id: user.id });
+      return firmen[0];
+    },
+  });
+
   const update = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Rechnung.update(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["rechnungen"] }),
@@ -44,6 +55,11 @@ export default function Rechnungen() {
     mutationFn: (id) => base44.entities.Rechnung.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["rechnungen"] }),
   });
+
+  const handleDownloadPDF = (rechnung) => {
+    const doc = generateProfessionalRechnung(rechnung, firma);
+    doc.save(`${rechnung.nummer}.pdf`);
+  };
 
   const filtered = statusFilter === "alle" ? rechnungen : rechnungen.filter((r) => r.status === statusFilter);
   const offenerBetrag = rechnungen
@@ -120,6 +136,15 @@ export default function Rechnungen() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="text-muted-foreground hover:text-primary"
+                  onClick={() => handleDownloadPDF(r)}
+                  title="PDF herunterladen"
+                >
+                  <FileDown className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="text-muted-foreground hover:text-destructive"
                   onClick={() => remove.mutate(r.id)}
                 >
@@ -131,7 +156,7 @@ export default function Rechnungen() {
         ))}
       </div>
 
-      <RechnungDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+
     </div>
   );
 }

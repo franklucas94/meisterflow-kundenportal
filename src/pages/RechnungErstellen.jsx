@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { generateProfessionalRechnung } from "@/lib/generateProfessionalRechnung";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +42,17 @@ export default function RechnungErstellen() {
   });
 
   const [nummer, setNummer] = useState("");
+
+  // Firmadaten für PDF
+  const { data: firma } = useQuery({
+    queryKey: ["firma"],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      if (!user) return null;
+      const firmen = await base44.entities.Firma.filter({ user_id: user.id });
+      return firmen[0];
+    },
+  });
 
   // Kundenliste
   const { data: kunden } = useQuery({
@@ -107,10 +119,20 @@ export default function RechnungErstellen() {
 
   const createRechnung = useMutation({
     mutationFn: (data) => base44.entities.Rechnung.create(data),
-    onSuccess: () => {
+    onSuccess: (createdRechnung) => {
       qc.invalidateQueries({ queryKey: ["rechnungen"] });
       toast({ title: "Rechnung erstellt", description: "Die Rechnung wurde erfolgreich erstellt." });
-      navigate("/rechnungen");
+      
+      // PDF automatisch generieren und herunterladen
+      setTimeout(() => {
+        const doc = generateProfessionalRechnung(createdRechnung, firma, form.positionen);
+        doc.save(`${createdRechnung.nummer}.pdf`);
+      }, 500);
+
+      // Nach kurzer Verzögerung navigieren
+      setTimeout(() => {
+        navigate("/rechnungen");
+      }, 1000);
     },
     onError: (error) => {
       toast({ title: "Fehler", description: "Rechnung konnte nicht erstellt werden." });
