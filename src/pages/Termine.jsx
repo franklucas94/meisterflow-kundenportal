@@ -59,13 +59,15 @@ export default function Termine() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["termine"] }),
   });
 
-  // Zukünftige/heutige oben (neuste zuerst), vergangene ganz unten (neuste zuerst)
+  // Zukünftige/heutige aufsteigend (nächster zuerst), vergangene danach absteigend (letzter zuerst)
   const sortiert = [...termine].sort((a, b) => {
     const aVerg = istVergangen(a.datum, a.status);
     const bVerg = istVergangen(b.datum, b.status);
     if (aVerg !== bVerg) return aVerg ? 1 : -1; // vergangene nach unten
-    // innerhalb gleicher Gruppe: absteigend (neuste oben)
-    return `${b.datum} ${b.uhrzeit || ""}`.localeCompare(`${a.datum} ${a.uhrzeit || ""}`);
+    const keyA = `${a.datum} ${a.uhrzeit || ""}`;
+    const keyB = `${b.datum} ${b.uhrzeit || ""}`;
+    // zukünftige: aufsteigend (nächster zuerst); vergangene: absteigend (letzter zuerst)
+    return aVerg ? keyB.localeCompare(keyA) : keyA.localeCompare(keyB);
   });
 
   const gruppen = sortiert.reduce((acc, t) => {
