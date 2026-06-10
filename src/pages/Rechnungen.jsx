@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
@@ -25,6 +26,7 @@ const STATUS_LABELS = {
 };
 
 export default function Rechnungen() {
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("alle");
   const [dialogOpen, setDialogOpen] = useState(false);
   const qc = useQueryClient();
@@ -65,7 +67,7 @@ export default function Rechnungen() {
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={() => setDialogOpen(true)}>
+        <Button onClick={() => navigate("/rechnungen/erstellen")}>
           <Plus className="w-4 h-4 mr-1.5" /> Neue Rechnung
         </Button>
       </PageHeader>
