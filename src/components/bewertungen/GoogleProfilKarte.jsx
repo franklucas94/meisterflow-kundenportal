@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, ExternalLink, Copy, CheckCircle2, XCircle } from "lucide-react";
+import { ExternalLink, Copy, CheckCircle2, XCircle, QrCode } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import Sterne from "./Sterne";
 
@@ -24,6 +24,19 @@ export default function GoogleProfilKarte({ firma, bewertungen }) {
     if (!bewertungsLink) return;
     navigator.clipboard.writeText(bewertungsLink);
     toast({ title: "Link kopiert!" });
+  };
+
+  const downloadQr = () => {
+    if (!bewertungsLink) return;
+    const encoded = encodeURIComponent(bewertungsLink);
+    // Swiss QR Code Generator (qrcode.swiss / API)
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}&format=png`;
+    const a = document.createElement("a");
+    a.href = qrUrl;
+    a.download = "google-bewertung-qr.png";
+    a.target = "_blank";
+    a.click();
+    toast({ title: "QR-Code wird heruntergeladen" });
   };
 
   return (
@@ -56,6 +69,9 @@ export default function GoogleProfilKarte({ firma, bewertungen }) {
           )}
           <Button variant="outline" size="sm" onClick={copyLink} disabled={!bewertungsLink}>
             <Copy className="w-4 h-4 mr-1.5" /> Link kopieren
+          </Button>
+          <Button variant="outline" size="sm" onClick={downloadQr} disabled={!bewertungsLink}>
+            <QrCode className="w-4 h-4 mr-1.5" /> QR-Code
           </Button>
         </div>
       </div>
