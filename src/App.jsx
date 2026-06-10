@@ -19,6 +19,7 @@ import Anfragen from '@/pages/Anfragen';
 import Termine from '@/pages/Termine';
 import Bewertungen from '@/pages/Bewertungen';
 import Offerten from '@/pages/Offerten';
+import OfferteErstellen from '@/pages/OfferteErstellen';
 import Rechnungen from '@/pages/Rechnungen';
 import Automatisierungen from '@/pages/Automatisierungen';
 import Website from '@/pages/Website';
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
           <Route path="/termine" element={<Termine />} />
           <Route path="/bewertungen" element={<Bewertungen />} />
           <Route path="/offerten" element={<Offerten />} />
+          <Route path="/offerten/erstellen" element={<OfferteErstellen />} />
           <Route path="/rechnungen" element={<Rechnungen />} />
           <Route path="/automatisierungen" element={<Automatisierungen />} />
           <Route path="/website" element={<Website />} />
