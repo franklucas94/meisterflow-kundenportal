@@ -12,7 +12,6 @@ import BewertungAnfordernDialog from "@/components/bewertungen/BewertungAnforder
 import BewertungsanfragenListe from "@/components/bewertungen/BewertungsanfragenListe";
 import NeuesteBewertungen from "@/components/bewertungen/NeuesteBewertungen";
 import BewertungsUebersicht from "@/components/bewertungen/BewertungsUebersicht";
-import BewertungslinkKarte from "@/components/bewertungen/BewertungslinkKarte";
 
 export default function Bewertungen() {
   const [anfordernOpen, setAnfordernOpen] = useState(false);
@@ -49,11 +48,8 @@ export default function Bewertungen() {
       {/* Bereich 1 – Google Unternehmensprofil */}
       <GoogleProfilKarte firma={firma} bewertungen={bewertungen} />
 
-      {/* Bereich 2 & 7 – Bewertungssystem + Link nebeneinander */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <BewertungssystemKarte firma={firma} />
-        <BewertungslinkKarte firma={firma} />
-      </div>
+      {/* Bereich 2 – Bewertungssystem */}
+      <BewertungssystemKarte firma={firma} />
 
       {/* Bereich 6 – Übersicht */}
       <BewertungsUebersicht bewertungen={bewertungen} />
