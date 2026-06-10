@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageHeader from "@/components/PageHeader";
+import WebsitePreview from "@/components/WebsitePreview";
 import StatusBadge from "@/components/StatusBadge";
 import { Plus, Globe, ExternalLink, Send, Upload, X, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -100,32 +101,8 @@ export default function Website() {
               </Button>
             </a>
           </div>
-          {/* iframe blocked by most sites (X-Frame-Options) → show screenshot via service */}
-          <div className="relative w-full bg-muted/30" style={{ height: "480px" }}>
-            <img
-              src={`https://api.screenshotmachine.com?key=demo&url=${encodeURIComponent(websiteUrl)}&dimension=1280x800&format=png&cacheLimit=0`}
-              alt="Website Vorschau"
-              className="w-full h-full object-cover object-top"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
-              }}
-            />
-            <div className="hidden w-full h-full items-center justify-center flex-col gap-4 text-center p-8">
-              <Globe className="w-12 h-12 text-muted-foreground/50" />
-              <div>
-                <p className="font-medium text-foreground">Vorschau nicht verfügbar</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Klicken Sie auf «Website öffnen» um die Website in einem neuen Tab anzusehen.
-                </p>
-              </div>
-              <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
-                <Button className="gap-2">
-                  <ExternalLink className="w-4 h-4" /> Website öffnen
-                </Button>
-              </a>
-            </div>
-          </div>
+          {/* Website preview via iframe with fallback */}
+          <WebsitePreview url={websiteUrl} />
         </Card>
       ) : (
         <Card className="mb-8 p-10 text-center">
