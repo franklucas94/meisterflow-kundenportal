@@ -49,7 +49,7 @@ export default function Bewertungen() {
       <GoogleProfilKarte firma={firma} bewertungen={bewertungen} />
 
       {/* Bereich 2 – Bewertungssystem */}
-      <BewertungssystemKarte firma={firma} />
+      <BewertungssystemKarte firma={firma} onAnfordern={() => setAnfordernOpen(true)} />
 
       {/* Bereich 6 – Übersicht */}
       <BewertungsUebersicht bewertungen={bewertungen} />
