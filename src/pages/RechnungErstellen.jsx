@@ -167,10 +167,10 @@ export default function RechnungErstellen() {
       <PageHeader title="Neue Rechnung" subtitle={`Nummer: ${nummer}`} />
 
       {/* ===== RECHNUNGSDETAILS ===== */}
-      <Card className="p-6">
-        <h2 className="text-lg font-bold mb-4">Rechnungsdetails</h2>
+      <Card className="p-4 md:p-6">
+        <h2 className="text-base md:text-lg font-bold mb-4">Rechnungsdetails</h2>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           <div>
             <Label htmlFor="rechnungsdatum" className="text-sm font-semibold">Rechnungsdatum</Label>
             <Input
@@ -208,8 +208,8 @@ export default function RechnungErstellen() {
       </Card>
 
       {/* ===== KUNDENDATEN ===== */}
-      <Card className="p-6">
-        <h2 className="text-lg font-bold mb-4">Kundendaten</h2>
+      <Card className="p-4 md:p-6">
+        <h2 className="text-base md:text-lg font-bold mb-4">Kundendaten</h2>
 
         <div className="mb-4">
           <Label className="text-xs uppercase font-semibold text-muted-foreground">Bestehenden Kunden auswählen</Label>
@@ -227,9 +227,9 @@ export default function RechnungErstellen() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
           <div>
-            <Label htmlFor="firma" className="text-sm font-semibold">Firma *</Label>
+            <Label htmlFor="firma" className="text-xs md:text-sm font-semibold">Firma *</Label>
             <Input
               id="firma"
               value={form.kunde_name}
@@ -261,9 +261,9 @@ export default function RechnungErstellen() {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           <div>
-            <Label htmlFor="plz" className="text-sm font-semibold">PLZ</Label>
+            <Label htmlFor="plz" className="text-xs md:text-sm font-semibold">PLZ</Label>
             <Input
               id="plz"
               value={form.plz}
@@ -297,16 +297,16 @@ export default function RechnungErstellen() {
       </Card>
 
       {/* ===== POSITIONEN ===== */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold">Positionen</h2>
-          <Button variant="outline" size="sm" onClick={addPosition}>
+      <Card className="p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <h2 className="text-base md:text-lg font-bold">Positionen</h2>
+          <Button variant="outline" size="sm" onClick={addPosition} className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-1.5" /> Position hinzufügen
           </Button>
         </div>
 
-        <div className="space-y-3">
-          <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-muted-foreground">
+        <div className="space-y-3 overflow-x-auto">
+          <div className="hidden md:grid grid-cols-12 gap-2 text-xs font-semibold text-muted-foreground px-2">
             <div className="col-span-6">Beschreibung</div>
             <div className="col-span-2">Menge</div>
             <div className="col-span-3">Einzelpreis CHF</div>
@@ -314,33 +314,42 @@ export default function RechnungErstellen() {
           </div>
 
           {form.positionen.map((pos, idx) => (
-            <div key={idx} className="grid grid-cols-12 gap-2 items-end">
-              <Input
-                placeholder="z.B. Elektroinstallation"
-                value={pos.beschreibung}
-                onChange={(e) => handlePositionChange(idx, "beschreibung", e.target.value)}
-                className="col-span-6"
-              />
-              <Input
-                type="number"
-                min="0"
-                step="0.5"
-                value={pos.menge}
-                onChange={(e) => handlePositionChange(idx, "menge", parseFloat(e.target.value) || 0)}
-                className="col-span-2"
-              />
-              <Input
-                type="number"
-                min="0"
-                step="0.05"
-                value={pos.einzelpreis}
-                onChange={(e) => handlePositionChange(idx, "einzelpreis", parseFloat(e.target.value) || 0)}
-                className="col-span-3"
-              />
+            <div key={idx} className="grid md:grid-cols-12 gap-2 md:gap-2 items-end bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none">
+              <div className="md:col-span-6">
+                <Label className="text-xs md:hidden font-semibold mb-1 block">Beschreibung</Label>
+                <Input
+                  placeholder="z.B. Elektroinstallation"
+                  value={pos.beschreibung}
+                  onChange={(e) => handlePositionChange(idx, "beschreibung", e.target.value)}
+                  className="md:col-span-6"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-xs md:hidden font-semibold mb-1 block">Menge</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={pos.menge}
+                  onChange={(e) => handlePositionChange(idx, "menge", parseFloat(e.target.value) || 0)}
+                  className="md:col-span-2"
+                />
+              </div>
+              <div className="md:col-span-3">
+                <Label className="text-xs md:hidden font-semibold mb-1 block">Einzelpreis CHF</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.05"
+                  value={pos.einzelpreis}
+                  onChange={(e) => handlePositionChange(idx, "einzelpreis", parseFloat(e.target.value) || 0)}
+                  className="md:col-span-3"
+                />
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
-                className="col-span-1 text-muted-foreground hover:text-destructive"
+                className="md:col-span-1 text-muted-foreground hover:text-destructive w-full md:w-auto"
                 onClick={() => removePosition(idx)}
               >
                 <Trash2 className="w-4 h-4" />
@@ -366,8 +375,8 @@ export default function RechnungErstellen() {
       </Card>
 
       {/* ===== NOTIZEN ===== */}
-      <Card className="p-6">
-        <h2 className="text-lg font-bold mb-4">Interne Notizen (optional)</h2>
+      <Card className="p-4 md:p-6">
+        <h2 className="text-base md:text-lg font-bold mb-4">Interne Notizen (optional)</h2>
         <Textarea
           value={form.notizen}
           onChange={(e) => setForm({ ...form, notizen: e.target.value })}
@@ -377,14 +386,14 @@ export default function RechnungErstellen() {
       </Card>
 
       {/* ===== BUTTONS ===== */}
-      <div className="flex gap-4 sticky bottom-6">
-        <Button variant="outline" onClick={() => navigate("/rechnungen")} className="flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 sticky bottom-4 sm:bottom-6 p-4 sm:p-0 bg-background sm:bg-transparent">
+        <Button variant="outline" onClick={() => navigate("/rechnungen")} className="w-full sm:flex-1">
           Abbrechen
         </Button>
         <Button
           onClick={handleRechnungErstellen}
           disabled={createRechnung.isPending}
-          className="flex-1 gap-2"
+          className="w-full sm:flex-1 gap-2"
         >
           <FileText className="w-4 h-4" />
           {createRechnung.isPending ? "Wird erstellt..." : "Rechnung erstellen"}
