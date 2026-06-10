@@ -20,7 +20,8 @@ import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt, FileText, D
 import { format, addDays } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import OfferteEditDialog from "@/components/forms/OfferteEditDialog";
-import jsPDF from "jspdf";
+import PDFPreviewModal from "@/components/PDFPreviewModal";
+import { generateProfessionalOfferte } from "@/lib/generateProfessionalOfferte";
 
 const STATUS_LABELS = {
   entwurf: "Entwurf",
@@ -33,89 +34,22 @@ export default function Offerten() {
   const [statusFilter, setStatusFilter] = useState("alle");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editOfferte, setEditOfferte] = useState(null);
+  const [previewOfferte, setPreviewOfferte] = useState(null);
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const generatePDF = (offerte) => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let y = 20;
+  const { data: firma } = useQuery({
+    queryKey: ["firma"],
+    queryFn: () => base44.entities.Firma.list("-created_date", 1),
+  });
 
-    // Header
-    doc.setFontSize(24);
-    doc.text("OFFERTE", 20, y);
-    y += 15;
-
-    // Offertennummer und Datum
-    doc.setFontSize(10);
-    doc.text(`Offertennummer: ${offerte.nummer}`, 20, y);
-    y += 5;
-    doc.text(`Datum: ${formatDatum(offerte.datum)}`, 20, y);
-    if (offerte.gueltig_bis) {
-      y += 5;
-      doc.text(`Gültig bis: ${formatDatum(offerte.gueltig_bis)}`, 20, y);
-    }
-    y += 12;
-
-    // Kunde
-    doc.setFontSize(11);
-    doc.text("Kunde:", 20, y);
-    y += 5;
-    doc.setFontSize(10);
-    doc.text(offerte.kunde_name || "-", 20, y);
-    y += 10;
-
-    // Titel
-    doc.setFontSize(12);
-    doc.text(offerte.titel || "-", 20, y);
-    y += 10;
-
-    // Leistungen
-    doc.setFontSize(10);
-    doc.text("Enthaltene Leistungen:", 20, y);
-    y += 5;
-    offerte.leistungen?.forEach((l) => {
-      doc.text(`• ${l}`, 25, y);
-      y += 5;
-    });
-    y += 5;
-
-    // Preise
-    doc.setFontSize(11);
-    doc.text("Preisübersicht:", 20, y);
-    y += 5;
-    doc.setFontSize(10);
-    if (offerte.betrag_einmalig) {
-      doc.text(`Einmalig: CHF ${offerte.betrag_einmalig.toFixed(2)}`, 25, y);
-      y += 5;
-    }
-    if (offerte.betrag_monatlich) {
-      doc.text(`Monatlich: CHF ${offerte.betrag_monatlich.toFixed(2)}`, 25, y);
-      y += 5;
-    }
-    const total = (offerte.betrag_einmalig || 0) + (offerte.betrag_monatlich || 0);
-    doc.setFontSize(11);
-    doc.text(`Total: CHF ${total.toFixed(2)}`, 25, y);
-
-    // Status
-    y += 12;
-    doc.setFontSize(10);
-    const statusLabels = { entwurf: "Entwurf", gesendet: "Gesendet", akzeptiert: "Akzeptiert", abgelehnt: "Abgelehnt" };
-    doc.text(`Status: ${statusLabels[offerte.status] || offerte.status}`, 20, y);
-
-    return doc;
-  };
-
-  const openPDF = (offerte, e) => {
-    e.stopPropagation();
-    const doc = generatePDF(offerte);
-    window.open(doc.output("bloburi"), "_blank");
+  const generateOffertePDF = (offerte) => {
+    return generateProfessionalOfferte(offerte, firma?.[0]);
   };
 
   const downloadPDF = (offerte, e) => {
     e.stopPropagation();
-    const doc = generatePDF(offerte);
+    const doc = generateOffertePDF(offerte);
     doc.save(`Offerte-${offerte.nummer}.pdf`);
     toast({ title: "PDF heruntergeladen" });
   };
@@ -244,7 +178,7 @@ export default function Offerten() {
                   </Button>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => openPDF(o, e)} title="PDF öffnen">
+                  <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => { e.stopPropagation(); setPreviewOfferte(o); }} title="PDF öffnen">
                     <FileText className="w-4 h-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => downloadPDF(o, e)} title="PDF herunterladen">
@@ -273,6 +207,12 @@ export default function Offerten() {
         offerte={editOfferte}
         open={!!editOfferte}
         onOpenChange={(o) => { if (!o) setEditOfferte(null); }}
+      />
+      <PDFPreviewModal
+        open={!!previewOfferte}
+        onOpenChange={(o) => { if (!o) setPreviewOfferte(null); }}
+        pdfDoc={previewOfferte ? generateOffertePDF(previewOfferte) : null}
+        filename={previewOfferte ? `Offerte-${previewOfferte.nummer}.pdf` : ""}
       />
     </div>
   );

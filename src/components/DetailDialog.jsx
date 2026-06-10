@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
 import { formatDatum, formatCHF } from "@/lib/format";
 import { CalendarDays, MapPin, Clock, FileText, Star, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import PDFPreviewModal from "./PDFPreviewModal";
+import { generateProfessionalOfferte } from "@/lib/generateProfessionalOfferte";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import jsPDF from "jspdf";
 
 function Zeile({ label, value }) {
@@ -66,76 +70,23 @@ export function TerminDetailDialog({ termin, open, onOpenChange }) {
 
 export function OfferteDetailDialog({ offerte, open, onOpenChange }) {
   const { toast } = useToast();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const { data: firma } = useQuery({
+    queryKey: ["firma"],
+    queryFn: () => base44.entities.Firma.list("-created_date", 1),
+  });
 
-  const generatePDF = (off) => {
-    const doc = new jsPDF();
-    let y = 20;
-
-    doc.setFontSize(24);
-    doc.text("OFFERTE", 20, y);
-    y += 15;
-
-    doc.setFontSize(10);
-    doc.text(`Offertennummer: ${off.nummer}`, 20, y);
-    y += 5;
-    doc.text(`Datum: ${formatDatum(off.datum)}`, 20, y);
-    if (off.gueltig_bis) {
-      y += 5;
-      doc.text(`Gültig bis: ${formatDatum(off.gueltig_bis)}`, 20, y);
-    }
-    y += 12;
-
-    doc.setFontSize(11);
-    doc.text("Kunde:", 20, y);
-    y += 5;
-    doc.setFontSize(10);
-    doc.text(off.kunde_name || "-", 20, y);
-    y += 10;
-
-    doc.setFontSize(12);
-    doc.text(off.titel || "-", 20, y);
-    y += 10;
-
-    doc.setFontSize(10);
-    doc.text("Enthaltene Leistungen:", 20, y);
-    y += 5;
-    off.leistungen?.forEach((l) => {
-      doc.text(`• ${l}`, 25, y);
-      y += 5;
-    });
-    y += 5;
-
-    doc.setFontSize(11);
-    doc.text("Preisübersicht:", 20, y);
-    y += 5;
-    doc.setFontSize(10);
-    if (off.betrag_einmalig) {
-      doc.text(`Einmalig: CHF ${off.betrag_einmalig.toFixed(2)}`, 25, y);
-      y += 5;
-    }
-    if (off.betrag_monatlich) {
-      doc.text(`Monatlich: CHF ${off.betrag_monatlich.toFixed(2)}`, 25, y);
-      y += 5;
-    }
-    const total = (off.betrag_einmalig || 0) + (off.betrag_monatlich || 0);
-    doc.setFontSize(11);
-    doc.text(`Total: CHF ${total.toFixed(2)}`, 25, y);
-
-    y += 12;
-    doc.setFontSize(10);
-    const statusLabels = { entwurf: "Entwurf", gesendet: "Gesendet", akzeptiert: "Akzeptiert", abgelehnt: "Abgelehnt" };
-    doc.text(`Status: ${statusLabels[off.status] || off.status}`, 20, y);
-
-    return doc;
+  const generateOffertePDF = (off) => {
+    return generateProfessionalOfferte(off, firma?.[0]);
   };
 
-  const openPDF = () => {
-    const doc = generatePDF(offerte);
-    window.open(doc.output("bloburi"), "_blank");
+  const openPreview = () => {
+    const doc = generateOffertePDF(offerte);
+    setPreviewOpen(true);
   };
 
   const downloadPDF = () => {
-    const doc = generatePDF(offerte);
+    const doc = generateOffertePDF(offerte);
     doc.save(`Offerte-${offerte.nummer}.pdf`);
     toast({ title: "PDF heruntergeladen" });
   };
@@ -151,8 +102,8 @@ export function OfferteDetailDialog({ offerte, open, onOpenChange }) {
           </DialogTitle>
         </DialogHeader>
         <div className="flex gap-2 mb-4">
-          <Button type="button" variant="outline" size="sm" onClick={openPDF} className="flex-1">
-            <FileText className="w-4 h-4 mr-1.5" /> Öffnen
+          <Button type="button" variant="outline" size="sm" onClick={openPreview} className="flex-1">
+            <FileText className="w-4 h-4 mr-1.5" /> Vorschau
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={downloadPDF} className="flex-1">
             <Download className="w-4 h-4 mr-1.5" /> Download
@@ -180,6 +131,12 @@ export function OfferteDetailDialog({ offerte, open, onOpenChange }) {
           <Zeile label="Erstellt am" value={formatDatum(offerte.created_date)} />
         </div>
       </DialogContent>
+      <PDFPreviewModal
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        pdfDoc={previewOpen ? generateOffertePDF(offerte) : null}
+        filename={`Offerte-${offerte.nummer}.pdf`}
+      />
     </Dialog>
   );
 }
