@@ -14,6 +14,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import OfferteDialog from "@/components/forms/OfferteDialog";
+import OffertenOverview from "@/components/offerten/OffertenOverview";
 import { formatCHF, formatDatum } from "@/lib/format";
 import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt, FileText, Download } from "lucide-react";
 import { format, addDays } from "date-fns";
@@ -172,6 +173,8 @@ export default function Offerten() {
           <Plus className="w-4 h-4 mr-1.5" /> Neue Offerte
         </Button>
       </PageHeader>
+
+      <OffertenOverview offerten={offerten} />
 
       <div className="space-y-3">
         {filtered.length === 0 && (
