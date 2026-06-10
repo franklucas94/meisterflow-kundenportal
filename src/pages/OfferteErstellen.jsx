@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Check } from "lucide-react";
+import { FileText, Check, Users, Wrench, DollarSign, MessageSquare } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -135,7 +135,7 @@ export default function OfferteErstellen() {
       {/* ===== KUNDENDATEN ===== */}
       <Card className="p-6">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span>👤</span> Kundendaten
+          <Users className="w-5 h-5" /> Kundendaten
         </h2>
 
         <div className="mb-4">
@@ -237,7 +237,7 @@ export default function OfferteErstellen() {
       {/* ===== DIENSTLEISTUNGEN ===== */}
       <Card className="p-6">
         <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-          <span>⚙️</span> Dienstleistungen
+          <Wrench className="w-5 h-5" /> Dienstleistungen
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -260,7 +260,7 @@ export default function OfferteErstellen() {
       {/* ===== PREISE ===== */}
       <Card className="p-6">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span>💰</span> Preise
+          <DollarSign className="w-5 h-5" /> Preise
         </h2>
 
         <div className="grid grid-cols-2 gap-4">
@@ -305,7 +305,7 @@ export default function OfferteErstellen() {
       {/* ===== BEMERKUNGEN ===== */}
       <Card className="p-6">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span>📝</span> Bemerkungen (optional)
+          <MessageSquare className="w-5 h-5" /> Bemerkungen (optional)
         </h2>
 
         <Textarea
