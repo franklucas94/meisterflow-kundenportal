@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
@@ -17,11 +17,24 @@ const useList = (key, entity) =>
   });
 
 export default function Uebersicht() {
+  const navigate = useNavigate();
   const { data: anfragen } = useList("anfragen", "Anfrage");
   const { data: termine } = useList("termine", "Termin");
   const { data: offerten } = useList("offerten", "Offerte");
   const { data: rechnungen } = useList("rechnungen", "Rechnung");
   const { data: bewertungen } = useList("bewertungen", "Bewertung");
+
+  const handleActivityClick = (id, art) => {
+    const [type, actualId] = [id[0], id.substring(1)];
+    const routes = {
+      a: `/anfragen?id=${actualId}`,
+      t: `/termine?id=${actualId}`,
+      o: `/offerten?id=${actualId}`,
+      r: `/rechnungen?id=${actualId}`,
+      b: `/bewertungen?id=${actualId}`,
+    };
+    if (routes[type]) navigate(routes[type]);
+  };
 
   const stats = [
     { label: "Neue Anfragen", value: anfragen.filter((a) => a.status === "neu").length, icon: Inbox, to: "/anfragen", color: "bg-blue-50 text-blue-600" },
@@ -74,7 +87,11 @@ export default function Uebersicht() {
             <p className="p-6 text-sm text-muted-foreground">Noch keine Aktivitäten vorhanden.</p>
           )}
           {aktivitaeten.map(({ id, icon: Icon, color, text, sub, status, date, art }) => (
-            <div key={id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-muted/50 transition-colors">
+            <button
+              key={id}
+              onClick={() => handleActivityClick(id, art)}
+              className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-muted/50 transition-colors text-left cursor-pointer"
+            >
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
                 <Icon className="w-4 h-4" />
               </div>
@@ -88,7 +105,7 @@ export default function Uebersicht() {
               <span className="text-xs text-muted-foreground whitespace-nowrap hidden sm:block">
                 {date ? formatDistanceToNow(new Date(date), { addSuffix: true, locale: de }) : ""}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       </Card>
