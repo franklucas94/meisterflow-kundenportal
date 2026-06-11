@@ -207,6 +207,15 @@ export default function Rechnungen() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    className="text-muted-foreground hover:text-primary h-8 w-8"
+                    onClick={() => setEmailRechnung(r)}
+                    title="E-Mail"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     className="text-muted-foreground hover:text-destructive h-8 w-8"
                     onClick={() => remove.mutate(r.id)}
                   >
@@ -220,6 +229,16 @@ export default function Rechnungen() {
       </div>
 
 
+      <EmailSendenDialog
+        open={!!emailRechnung}
+        onOpenChange={(o) => { if (!o) setEmailRechnung(null); }}
+        empfaenger={emailRechnung?.kunde_name}
+        betreff={`Rechnung ${emailRechnung?.nummer}`}
+        nachricht={`Sehr geehrte Damen und Herren,\n\nanbei erhalten Sie die Rechnung ${emailRechnung?.nummer}.\n\nMit freundlichen Grüssen`}
+        pdfGenerator={emailRechnung ? () => generateProfessionalRechnung(emailRechnung, firma) : null}
+        pdfFilename={emailRechnung ? `${emailRechnung.nummer}.pdf` : ""}
+        dokumentTyp="Rechnung"
+      />
     </div>
   );
 }

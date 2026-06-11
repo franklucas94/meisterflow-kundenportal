@@ -188,7 +188,7 @@ export default function Offerten() {
                   <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => downloadPDF(o, e)} title="PDF herunterladen">
                     <Download className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => { e.stopPropagation(); setEmailOfferte(o); }} title="Per E-Mail senden">
+                  <Button variant="ghost" size="icon" className="w-8 h-8 text-muted-foreground hover:text-primary" onClick={(e) => { e.stopPropagation(); setEmailOfferte(o); }} title="Per E-Mail senden">
                     <Mail className="w-4 h-4" />
                   </Button>
                 </div>
@@ -209,15 +209,6 @@ export default function Offerten() {
         ))}
       </div>
 
-      <EmailSendenDialog
-        open={!!emailOfferte}
-        onOpenChange={(o) => { if (!o) setEmailOfferte(null); }}
-        empfaenger=""
-        betreff={emailOfferte ? `Offerte ${emailOfferte.nummer} – ${emailOfferte.titel}` : ""}
-        nachricht={emailOfferte ? `Sehr geehrte Damen und Herren,\n\nanbei erhalten Sie unsere Offerte ${emailOfferte.nummer}.\n\nMit freundlichen Grüssen` : ""}
-        pdfDoc={emailOfferte ? generateOffertePDF(emailOfferte) : null}
-        pdfFilename={emailOfferte ? `Offerte-${emailOfferte.nummer}.pdf` : ""}
-      />
       <OfferteDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <OfferteEditDialog
         offerte={editOfferte}
@@ -229,6 +220,16 @@ export default function Offerten() {
         onOpenChange={(o) => { if (!o) setPreviewOfferte(null); }}
         pdfDoc={previewOfferte ? generateOffertePDF(previewOfferte) : null}
         filename={previewOfferte ? `Offerte-${previewOfferte.nummer}.pdf` : ""}
+      />
+      <EmailSendenDialog
+        open={!!emailOfferte}
+        onOpenChange={(o) => { if (!o) setEmailOfferte(null); }}
+        empfaenger={emailOfferte?.kunde_name}
+        betreff={`Offerte ${emailOfferte?.nummer}`}
+        nachricht={`Sehr geehrte Damen und Herren,\n\nanbei erhalten Sie die Offerte ${emailOfferte?.nummer}.\n\nMit freundlichen Grüssen`}
+        pdfGenerator={emailOfferte ? () => generateOffertePDF(emailOfferte) : null}
+        pdfFilename={emailOfferte ? `Offerte-${emailOfferte.nummer}.pdf` : ""}
+        dokumentTyp="Offerte"
       />
     </div>
   );
