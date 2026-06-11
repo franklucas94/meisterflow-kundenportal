@@ -18,7 +18,14 @@ import { Plus, Building2, MapPin, Bell, BellOff, Trash2, FileText } from "lucide
 import { format, isToday, isTomorrow, isThisWeek, isPast, parseISO, startOfDay, getISOWeek } from "date-fns";
 import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import KalenderSync from "@/components/KalenderSync";
+import { useState as useLocalState } from "react";
+
+const GCalIcon = () => (
+  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="Google Kalender" className="w-4 h-4 object-contain" />
+);
+const OutlookIcon = () => (
+  <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" className="w-4 h-4 object-contain" />
+);
 
 const STATUS_LABELS = {
   geplant: "Geplant",
@@ -96,15 +103,16 @@ export default function Termine() {
   return (
     <div>
       <PageHeader title="Termine">
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => base44.connectors.connectAppUser("6a2a68df83a79531c222b4a6").then(url => window.open(url, "_blank"))}>
+          <GCalIcon /> Google Kalender
+        </Button>
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => base44.connectors.connectAppUser("6a2a5b27725e857800ca8e5d").then(url => window.open(url, "_blank"))}>
+          <OutlookIcon /> Outlook
+        </Button>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-1.5" /> Neuer Termin
         </Button>
       </PageHeader>
-
-      {/* Google Kalender Verbindung */}
-      <div className="mb-6">
-        <KalenderSync />
-      </div>
 
       {/* Mini-Zusammenfassung */}
       <div className="flex gap-4 mb-6 text-sm">
