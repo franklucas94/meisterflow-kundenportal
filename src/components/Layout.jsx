@@ -6,8 +6,7 @@ import {
   Inbox,
   CalendarDays,
   Star,
-  FileText,
-  Receipt,
+  Wallet,
   Menu,
   X,
   Home,
@@ -24,8 +23,7 @@ const NAV = [
   { label: "Termine", path: "/termine", icon: CalendarDays },
   { label: "Website", path: "/website", icon: Globe },
   { label: "Bewertungen", path: "/bewertungen", icon: Star },
-  { label: "Offerten", path: "/offerten", icon: FileText },
-  { label: "Rechnungen", path: "/rechnungen", icon: Receipt },
+  { label: "Finanzen", path: "/finanzen", icon: Wallet },
   { label: "Firma", path: "/firma", icon: Building2 },
 ];
 

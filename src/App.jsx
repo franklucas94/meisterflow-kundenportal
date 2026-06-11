@@ -26,6 +26,7 @@ import Automatisierungen from '@/pages/Automatisierungen';
 import Website from '@/pages/Website';
 import Onboarding from '@/pages/Onboarding';
 import FirmaEinstellungen from '@/pages/FirmaEinstellungen';
+import Finanzen from '@/pages/Finanzen';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
           <Route path="/rechnungen/erstellen" element={<RechnungErstellen />} />
           <Route path="/automatisierungen" element={<Automatisierungen />} />
           <Route path="/website" element={<Website />} />
+          <Route path="/finanzen" element={<Finanzen />} />
           <Route path="/firma" element={<FirmaEinstellungen />} />
         </Route>
       </Route>
