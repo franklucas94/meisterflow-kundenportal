@@ -12,7 +12,7 @@ import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import IntegrationKarte from "@/components/onboarding/IntegrationKarte";
 import EmailVerbindungStatus from "@/components/EmailVerbindungStatus";
-import GoogleKalenderSync from "@/components/GoogleKalenderSync";
+import KalenderSync from "@/components/KalenderSync";
 import { cn } from "@/lib/utils";
 import {
   Building2, Globe, CalendarDays, Star, MessageCircle, MessageSquare,
@@ -226,7 +226,7 @@ export default function FirmaEinstellungen() {
                 <h3 className="font-heading font-bold text-sm">Kalender</h3>
                 {form.kalender_verbunden && <StatusBadge status="aktiv" />}
               </div>
-              <GoogleKalenderSync />
+              <KalenderSync />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { id: "google", name: "Google Kalender", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="GCal" className="w-5 h-5 object-contain" /> },
