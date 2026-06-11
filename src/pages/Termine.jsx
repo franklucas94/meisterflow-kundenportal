@@ -18,6 +18,7 @@ import { Plus, Building2, MapPin, Bell, BellOff, Trash2, FileText } from "lucide
 import { format, isToday, isTomorrow, isThisWeek, isPast, parseISO, startOfDay, getISOWeek } from "date-fns";
 import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import GoogleKalenderSync from "@/components/GoogleKalenderSync";
 
 const STATUS_LABELS = {
   geplant: "Geplant",
@@ -99,6 +100,11 @@ export default function Termine() {
           <Plus className="w-4 h-4 mr-1.5" /> Neuer Termin
         </Button>
       </PageHeader>
+
+      {/* Google Kalender Verbindung */}
+      <div className="mb-6">
+        <GoogleKalenderSync />
+      </div>
 
       {/* Mini-Zusammenfassung */}
       <div className="flex gap-4 mb-6 text-sm">
