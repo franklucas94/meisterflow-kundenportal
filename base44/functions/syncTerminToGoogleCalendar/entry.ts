@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+const GCAL_CONNECTOR_ID = "6a2a68df83a79531c222b4a6";
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -11,8 +13,8 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { termin, action } = body; // action: 'create' | 'update' | 'delete'
 
-    // Shared connection — uses the builder's Google account
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlecalendar");
+    // App-User connection — each user's own Google Calendar
+    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(GCAL_CONNECTOR_ID);
 
     const authHeader = {
       'Authorization': `Bearer ${accessToken}`,
