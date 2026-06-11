@@ -17,7 +17,7 @@ import GoogleDriveSync from "@/components/GoogleDriveSync";
 import { cn } from "@/lib/utils";
 import {
   Building2, Globe, CalendarDays, Star, MessageCircle, MessageSquare,
-  Mail, Briefcase, LinkIcon, Upload, Check, Save, X, HardDrive
+  Mail, Briefcase, LinkIcon, Upload, Check, Save, X
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -243,6 +243,17 @@ export default function FirmaEinstellungen() {
               </div>
             </Card>
 
+            {/* Google Drive */}
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive" className="w-4 h-4" />
+                <h3 className="font-heading font-bold text-sm">Google Drive</h3>
+                <span className="text-xs text-muted-foreground">PDFs automatisch archivieren</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Generierte Rechnungen und Offerten werden automatisch in Ihrem Google Drive unter <strong>MeisterFlow/</strong> gespeichert.</p>
+              <GoogleDriveSync />
+            </Card>
+
             {/* Google */}
             <Card className="p-5 space-y-4">
               <div className="flex items-center gap-2">
@@ -308,16 +319,6 @@ export default function FirmaEinstellungen() {
                   <Input value={form.sms_eigene_nummer || ""} onChange={f("sms_eigene_nummer")} placeholder="+41 44 123 45 67" />
                 </div>
               )}
-            </Card>
-
-            {/* Google Drive */}
-            <Card className="p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <HardDrive className="w-4 h-4 text-primary" />
-                <h3 className="font-heading font-bold text-sm">Google Drive</h3>
-              </div>
-              <p className="text-xs text-muted-foreground">Generierte PDFs (Rechnungen, Offerten) automatisch in Ihrem Google Drive speichern.</p>
-              <GoogleDriveSync />
             </Card>
 
             {/* E-Mail */}

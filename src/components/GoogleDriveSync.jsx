@@ -10,37 +10,30 @@ export default function GoogleDriveSync({ onStatusChange }) {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
 
-  const checkConnection = async () => {
+  useEffect(() => {
+    checkStatus();
+  }, []);
+
+  const checkStatus = async () => {
+    setLoading(true);
     try {
-      // Try a minimal Drive API call to verify connection
-      await base44.functions.invoke('uploadPdfToDrive', {
-        pdfBase64: null, fileName: null, _checkOnly: true
+      const authed = await base44.auth.isAuthenticated();
+      if (!authed) { setLoading(false); return; }
+      // Try a tiny Drive API call to verify the token works
+      const res = await base44.functions.invoke('uploadPdfToDrive', {
+        _checkOnly: true, pdfBase64: '', fileName: ''
       });
+      // If no "No active connection" error → connected
       setConnected(true);
       if (onStatusChange) onStatusChange(true);
-    } catch {
-      // If it fails due to missing params but not auth, still connected
-      // We'll detect "not connected" by specific error
-      setConnected(false);
+    } catch (err) {
+      const msg = err?.message || '';
+      setConnected(!msg.includes('No active connection') ? false : false);
       if (onStatusChange) onStatusChange(false);
+    } finally {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    base44.auth.isAuthenticated().then(async (authed) => {
-      if (authed) {
-        // Check if user has a Drive connection by trying to get status
-        try {
-          const url = await base44.connectors.connectAppUser(DRIVE_CONNECTOR_ID);
-          // If we can get URL, check actual connection via a lightweight test
-          setConnected(false);
-        } catch {
-          setConnected(false);
-        }
-      }
-      setLoading(false);
-    });
-  }, []);
 
   const handleConnect = async () => {
     setConnecting(true);
@@ -49,10 +42,8 @@ export default function GoogleDriveSync({ onStatusChange }) {
     const timer = setInterval(async () => {
       if (!popup || popup.closed) {
         clearInterval(timer);
-        // After OAuth, mark as connected
-        setConnected(true);
         setConnecting(false);
-        if (onStatusChange) onStatusChange(true);
+        await checkStatus();
       }
     }, 500);
   };
@@ -63,36 +54,25 @@ export default function GoogleDriveSync({ onStatusChange }) {
     if (onStatusChange) onStatusChange(false);
   };
 
-  if (loading) return null;
+  if (loading) {
+    return <div className="flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Wird geprüft…</div>;
+  }
 
   return (
     <div className="flex items-center gap-2">
       {connected ? (
         <>
-          <span className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-            <Check className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
+            <Check className="w-4 h-4" />
             Google Drive verbunden
           </span>
-          <button
-            onClick={handleDisconnect}
-            className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-          >
+          <button onClick={handleDisconnect} className="text-xs text-muted-foreground hover:text-destructive transition-colors ml-2">
             <X className="w-3.5 h-3.5" />
           </button>
         </>
       ) : (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleConnect}
-          disabled={connecting}
-          className="gap-1.5 text-xs h-8"
-        >
-          {connecting ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <HardDrive className="w-3.5 h-3.5" />
-          )}
+        <Button variant="outline" size="sm" onClick={handleConnect} disabled={connecting} className="gap-1.5">
+          {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <HardDrive className="w-3.5 h-3.5" />}
           Google Drive verbinden
         </Button>
       )}
