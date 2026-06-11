@@ -13,10 +13,11 @@ import StatusBadge from "@/components/StatusBadge";
 import IntegrationKarte from "@/components/onboarding/IntegrationKarte";
 import EmailVerbindungStatus from "@/components/EmailVerbindungStatus";
 import KalenderSync from "@/components/KalenderSync";
+import GoogleDriveSync from "@/components/GoogleDriveSync";
 import { cn } from "@/lib/utils";
 import {
   Building2, Globe, CalendarDays, Star, MessageCircle, MessageSquare,
-  Mail, Briefcase, LinkIcon, Upload, Check, Save, X
+  Mail, Briefcase, LinkIcon, Upload, Check, Save, X, HardDrive
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -307,6 +308,16 @@ export default function FirmaEinstellungen() {
                   <Input value={form.sms_eigene_nummer || ""} onChange={f("sms_eigene_nummer")} placeholder="+41 44 123 45 67" />
                 </div>
               )}
+            </Card>
+
+            {/* Google Drive */}
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <HardDrive className="w-4 h-4 text-primary" />
+                <h3 className="font-heading font-bold text-sm">Google Drive</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">Generierte PDFs (Rechnungen, Offerten) automatisch in Ihrem Google Drive speichern.</p>
+              <GoogleDriveSync />
             </Card>
 
             {/* E-Mail */}

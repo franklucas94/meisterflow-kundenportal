@@ -13,6 +13,8 @@ import { Trash2, Plus, FileText } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { useToast } from "@/components/ui/use-toast";
 import { format, addDays } from "date-fns";
+import DriveUploadButton from "@/components/DriveUploadButton";
+import { generateProfessionalRechnung as genRechnung } from "@/lib/generateProfessionalRechnung";
 
 const STATUS_LABELS = {
   offen: "Offen",
@@ -42,6 +44,7 @@ export default function RechnungErstellen() {
   });
 
   const [nummer, setNummer] = useState("");
+  const [createdRechnungData, setCreatedRechnungData] = useState(null);
 
   // Firmadaten für PDF
   const { data: firma } = useQuery({
@@ -122,19 +125,14 @@ export default function RechnungErstellen() {
     onSuccess: (createdRechnung) => {
       qc.invalidateQueries({ queryKey: ["rechnungen"] });
       toast({ title: "Rechnung erstellt", description: "Die Rechnung wurde erfolgreich erstellt." });
-      
-      // PDF automatisch generieren und herunterladen
+      setCreatedRechnungData({ rechnung: createdRechnung, positionen: form.positionen });
+      // PDF automatisch herunterladen
       setTimeout(() => {
         const doc = generateProfessionalRechnung(createdRechnung, firma, form.positionen);
         doc.save(`${createdRechnung.nummer}.pdf`);
-      }, 500);
-
-      // Nach kurzer Verzögerung navigieren
-      setTimeout(() => {
-        navigate("/rechnungen");
-      }, 1000);
+      }, 300);
     },
-    onError: (error) => {
+    onError: () => {
       toast({ title: "Fehler", description: "Rechnung konnte nicht erstellt werden." });
     },
   });
@@ -390,14 +388,31 @@ export default function RechnungErstellen() {
         <Button variant="outline" onClick={() => navigate("/rechnungen")} className="w-full sm:flex-1">
           Abbrechen
         </Button>
-        <Button
-          onClick={handleRechnungErstellen}
-          disabled={createRechnung.isPending}
-          className="w-full sm:flex-1 gap-2"
-        >
-          <FileText className="w-4 h-4" />
-          {createRechnung.isPending ? "Wird erstellt..." : "Rechnung erstellen"}
-        </Button>
+        {createdRechnungData ? (
+          <>
+            <DriveUploadButton
+              folderName="MeisterFlow/Rechnungen"
+              label="In Drive speichern"
+              getPdfBase64={async () => {
+                const doc = generateProfessionalRechnung(createdRechnungData.rechnung, firma, createdRechnungData.positionen);
+                const base64 = doc.output('datauristring').split(',')[1];
+                return { base64, fileName: `${createdRechnungData.rechnung.nummer}.pdf` };
+              }}
+            />
+            <Button onClick={() => navigate("/rechnungen")} className="w-full sm:flex-1 gap-2">
+              Fertig
+            </Button>
+          </>
+        ) : (
+          <Button
+            onClick={handleRechnungErstellen}
+            disabled={createRechnung.isPending}
+            className="w-full sm:flex-1 gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            {createRechnung.isPending ? "Wird erstellt..." : "Rechnung erstellen"}
+          </Button>
+        )}
       </div>
     </div>
   );

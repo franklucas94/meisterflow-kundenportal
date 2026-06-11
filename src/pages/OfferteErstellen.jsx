@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, Check, Users, Wrench, DollarSign, MessageSquare } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { useToast } from "@/components/ui/use-toast";
+import DriveUploadButton from "@/components/DriveUploadButton";
 
 const DIENSTLEISTUNGEN = [
   { id: "elektro", name: "Elektroinstallation", beschreibung: "Neue Stromleitungen & Installationen" },
@@ -45,6 +46,7 @@ export default function OfferteErstellen() {
   });
 
   const [nummer, setNummer] = useState("");
+  const [createdOfferteData, setCreatedOfferteData] = useState(null);
 
   // Kundenliste
   const { data: kunden } = useQuery({
@@ -94,12 +96,12 @@ export default function OfferteErstellen() {
 
   const createOfferte = useMutation({
     mutationFn: (data) => base44.entities.Offerte.create(data),
-    onSuccess: () => {
+    onSuccess: (created) => {
       qc.invalidateQueries({ queryKey: ["offerten"] });
       toast({ title: "Offerte erstellt", description: "Die Offerte wurde erfolgreich erstellt." });
-      navigate("/offerten");
+      setCreatedOfferteData(created);
     },
-    onError: (error) => {
+    onError: () => {
       toast({ title: "Fehler", description: "Offerte konnte nicht erstellt werden." });
     },
   });
@@ -325,14 +327,42 @@ export default function OfferteErstellen() {
         >
           Abbrechen
         </Button>
-        <Button
-          onClick={handleOfferttenErstellen}
-          disabled={createOfferte.isPending}
-          className="flex-1 gap-2"
-        >
-          <FileText className="w-4 h-4" />
-          {createOfferte.isPending ? "Wird erstellt..." : "Offerte erstellen"}
-        </Button>
+        {createdOfferteData ? (
+          <>
+            <DriveUploadButton
+              folderName="MeisterFlow/Offerten"
+              label="In Drive speichern"
+              getPdfBase64={async () => {
+                // Simple text-based fallback since offerte PDF lib may vary
+                const { jsPDF } = await import('jspdf');
+                const doc = new jsPDF();
+                doc.setFontSize(16);
+                doc.text(`Offerte ${createdOfferteData.nummer}`, 20, 20);
+                doc.setFontSize(11);
+                doc.text(`Kunde: ${createdOfferteData.kunde_name}`, 20, 35);
+                doc.text(`Datum: ${createdOfferteData.datum}`, 20, 45);
+                doc.text(`Betrag einmalig: CHF ${createdOfferteData.betrag_einmalig?.toFixed(2)}`, 20, 55);
+                if (createdOfferteData.betrag_monatlich) {
+                  doc.text(`Betrag monatlich: CHF ${createdOfferteData.betrag_monatlich?.toFixed(2)}`, 20, 65);
+                }
+                const base64 = doc.output('datauristring').split(',')[1];
+                return { base64, fileName: `${createdOfferteData.nummer}.pdf` };
+              }}
+            />
+            <Button onClick={() => navigate("/offerten")} className="flex-1 gap-2">
+              Fertig
+            </Button>
+          </>
+        ) : (
+          <Button
+            onClick={handleOfferttenErstellen}
+            disabled={createOfferte.isPending}
+            className="flex-1 gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            {createOfferte.isPending ? "Wird erstellt..." : "Offerte erstellen"}
+          </Button>
+        )}
       </div>
     </div>
   );
