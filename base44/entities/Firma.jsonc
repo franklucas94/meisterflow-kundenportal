@@ -113,6 +113,10 @@
     "google_bewertungslink": {
       "type": "string"
     },
+    "stripe_zahlungslink": {
+      "type": "string",
+      "description": "Stripe Zahlungslink (https://buy.stripe.com/...)"
+    },
     "onboarding_abgeschlossen": {
       "type": "boolean",
       "default": false

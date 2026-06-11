@@ -321,6 +321,28 @@ export default function FirmaEinstellungen() {
               )}
             </Card>
 
+            {/* Stripe */}
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 7c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2z" fill="#6772e5"/><rect width="24" height="24" rx="4" fill="#6772e5"/><path d="M10.5 8.5c1.1-.5 2.8-.3 3.5.8.5.8.3 1.9-.5 2.4l-2.2 1.3c-.8.5-1 1.5-.5 2.2.4.6 1.3.9 2 .6" stroke="white" strokeWidth="1.5" strokeLinecap="round"/><path d="M8 12h8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                <h3 className="font-heading font-bold text-sm">Stripe Zahlung</h3>
+                {form.stripe_zahlungslink && <StatusBadge status="aktiv" />}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Hinterlegen Sie Ihren Stripe-Zahlungslink, damit Kunden Rechnungen direkt online bezahlen können.
+                {" "}<a href="https://dashboard.stripe.com/register" target="_blank" rel="noopener noreferrer" className="text-primary underline">Noch kein Stripe-Konto? Jetzt registrieren →</a>
+              </p>
+              <div className="space-y-1.5">
+                <Label>Stripe Zahlungslink</Label>
+                <Input
+                  value={form.stripe_zahlungslink || ""}
+                  onChange={f("stripe_zahlungslink")}
+                  placeholder="https://buy.stripe.com/..."
+                />
+                <p className="text-xs text-muted-foreground">Erstellen Sie einen Zahlungslink in Ihrem <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noopener noreferrer" className="text-primary underline">Stripe Dashboard</a> und fügen Sie ihn hier ein.</p>
+              </div>
+            </Card>
+
             {/* E-Mail */}
             <Card className="p-5 space-y-4">
               <div className="flex items-center gap-2">

@@ -16,7 +16,7 @@ import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import RechnungDialog from "@/components/forms/RechnungDialog";
 import { formatCHF, formatDatum } from "@/lib/format";
-import { Plus, Building2, CalendarDays, Trash2, Zap, FileDown, Mail } from "lucide-react";
+import { Plus, Building2, CalendarDays, Trash2, Zap, FileDown, Mail, CreditCard, ExternalLink } from "lucide-react";
 import { generateProfessionalRechnung } from "@/lib/generateProfessionalRechnung";
 import EmailSendenDialog from "@/components/forms/EmailSendenDialog";
 
@@ -173,6 +173,22 @@ export default function Rechnungen() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    className="text-muted-foreground hover:text-emerald-600"
+                    title="Zahlungslink öffnen"
+                    onClick={() => {
+                      const link = firma?.stripe_zahlungslink;
+                      if (link) {
+                        window.open(link, "_blank");
+                      } else {
+                        window.open("https://dashboard.stripe.com/register", "_blank");
+                      }
+                    }}
+                  >
+                    <CreditCard className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     className="text-muted-foreground hover:text-destructive"
                     onClick={() => remove.mutate(r.id)}
                   >
@@ -212,6 +228,22 @@ export default function Rechnungen() {
                     title="E-Mail"
                   >
                     <Mail className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-emerald-600 h-8 w-8"
+                    title="Zahlungslink"
+                    onClick={() => {
+                      const link = firma?.stripe_zahlungslink;
+                      if (link) {
+                        window.open(link, "_blank");
+                      } else {
+                        window.open("https://dashboard.stripe.com/register", "_blank");
+                      }
+                    }}
+                  >
+                    <CreditCard className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="ghost"
