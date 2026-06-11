@@ -17,7 +17,8 @@ import StatusBadge from "@/components/StatusBadge";
 import OfferteDialog from "@/components/forms/OfferteDialog";
 import OffertenOverview from "@/components/offerten/OffertenOverview";
 import { formatCHF, formatDatum } from "@/lib/format";
-import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt, FileText, Download } from "lucide-react";
+import { Plus, Building2, CalendarDays, CreditCard, Trash2, Receipt, FileText, Download, Mail } from "lucide-react";
+import EmailSendenDialog from "@/components/forms/EmailSendenDialog";
 import { format, addDays } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import OfferteEditDialog from "@/components/forms/OfferteEditDialog";
@@ -37,6 +38,7 @@ export default function Offerten() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editOfferte, setEditOfferte] = useState(null);
   const [previewOfferte, setPreviewOfferte] = useState(null);
+  const [emailOfferte, setEmailOfferte] = useState(null);
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -186,6 +188,9 @@ export default function Offerten() {
                   <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => downloadPDF(o, e)} title="PDF herunterladen">
                     <Download className="w-4 h-4" />
                   </Button>
+                  <Button variant="ghost" size="icon" className="w-8 h-8" onClick={(e) => { e.stopPropagation(); setEmailOfferte(o); }} title="Per E-Mail senden">
+                    <Mail className="w-4 h-4" />
+                  </Button>
                 </div>
                 {o.status === "akzeptiert" && (
                   <Button
@@ -204,6 +209,15 @@ export default function Offerten() {
         ))}
       </div>
 
+      <EmailSendenDialog
+        open={!!emailOfferte}
+        onOpenChange={(o) => { if (!o) setEmailOfferte(null); }}
+        empfaenger=""
+        betreff={emailOfferte ? `Offerte ${emailOfferte.nummer} – ${emailOfferte.titel}` : ""}
+        nachricht={emailOfferte ? `Sehr geehrte Damen und Herren,\n\nanbei erhalten Sie unsere Offerte ${emailOfferte.nummer}.\n\nMit freundlichen Grüssen` : ""}
+        pdfDoc={emailOfferte ? generateOffertePDF(emailOfferte) : null}
+        pdfFilename={emailOfferte ? `Offerte-${emailOfferte.nummer}.pdf` : ""}
+      />
       <OfferteDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <OfferteEditDialog
         offerte={editOfferte}

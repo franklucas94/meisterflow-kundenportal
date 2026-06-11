@@ -16,8 +16,9 @@ import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import RechnungDialog from "@/components/forms/RechnungDialog";
 import { formatCHF, formatDatum } from "@/lib/format";
-import { Plus, Building2, CalendarDays, Trash2, Zap, FileDown } from "lucide-react";
+import { Plus, Building2, CalendarDays, Trash2, Zap, FileDown, Mail } from "lucide-react";
 import { generateProfessionalRechnung } from "@/lib/generateProfessionalRechnung";
+import EmailSendenDialog from "@/components/forms/EmailSendenDialog";
 
 const STATUS_LABELS = {
   offen: "Offen",
@@ -30,6 +31,7 @@ export default function Rechnungen() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("alle");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [emailRechnung, setEmailRechnung] = useState(null);
   const qc = useQueryClient();
 
   const { data: rechnungen = [] } = useQuery({
@@ -158,6 +160,15 @@ export default function Rechnungen() {
                     title="PDF herunterladen"
                   >
                     <FileDown className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-primary"
+                    onClick={() => setEmailRechnung(r)}
+                    title="Per E-Mail senden"
+                  >
+                    <Mail className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="ghost"
