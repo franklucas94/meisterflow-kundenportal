@@ -24,7 +24,17 @@ const GCalIcon = () => (
   <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="Google Kalender" className="w-4 h-4 object-contain" />
 );
 const OutlookIcon = () => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" className="w-4 h-4 object-contain" />
+  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="3" fill="#0078D4"/>
+    <path d="M13 5h7.5A.5.5 0 0 1 21 5.5v13a.5.5 0 0 1-.5.5H13V5z" fill="#106EBE"/>
+    <path d="M13 5v14H3.5A.5.5 0 0 1 3 18.5v-13A.5.5 0 0 1 3.5 5H13z" fill="#0078D4"/>
+    <rect x="14" y="8" width="6" height="1.2" rx="0.4" fill="white" opacity="0.9"/>
+    <rect x="14" y="10.4" width="6" height="1.2" rx="0.4" fill="white" opacity="0.9"/>
+    <rect x="14" y="12.8" width="6" height="1.2" rx="0.4" fill="white" opacity="0.9"/>
+    <rect x="14" y="15.2" width="4" height="1.2" rx="0.4" fill="white" opacity="0.9"/>
+    <ellipse cx="8" cy="12" rx="3" ry="3.5" fill="white" opacity="0.95"/>
+    <ellipse cx="8" cy="12" rx="2" ry="2.5" fill="#0078D4"/>
+  </svg>
 );
 
 const STATUS_LABELS = {
