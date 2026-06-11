@@ -41,6 +41,10 @@
     },
     "notizen": {
       "type": "string"
+    },
+    "google_event_id": {
+      "type": "string",
+      "description": "Google Calendar Event ID f\u00fcr Sync"
     }
   },
   "required": [

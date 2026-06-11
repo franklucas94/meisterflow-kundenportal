@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,13 +14,30 @@ const LEER = { titel: "", kunde_id: "", kunde_name: "", datum: "", uhrzeit: "", 
 export default function TerminDialog({ open, onOpenChange }) {
   const [form, setForm] = useState(LEER);
   const qc = useQueryClient();
+  const { toast } = useToast();
+
+  const syncToGoogleCalendar = async (termin) => {
+    try {
+      const res = await base44.functions.invoke("syncTerminToGoogleCalendar", {
+        action: "create",
+        termin,
+      });
+      if (res.data?.eventId) {
+        await base44.entities.Termin.update(termin.id, { google_event_id: res.data.eventId });
+        qc.invalidateQueries({ queryKey: ["termine"] });
+      }
+    } catch {
+      // Silently ignore — Google Calendar not connected
+    }
+  };
 
   const create = useMutation({
     mutationFn: (d) => base44.entities.Termin.create(d),
-    onSuccess: () => {
+    onSuccess: async (newTermin) => {
       qc.invalidateQueries({ queryKey: ["termine"] });
       setForm(LEER);
       onOpenChange(false);
+      await syncToGoogleCalendar(newTermin);
     },
   });
 
