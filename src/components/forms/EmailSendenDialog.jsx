@@ -8,6 +8,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, Loader2, CheckCircle2, AlertCircle, ExternalLink } from "lucide-react";
 
+// SVG Icons for Gmail and Outlook
+const GmailIcon = () => (
+  <svg viewBox="0 0 48 48" width="28" height="28">
+    <path fill="#EA4335" d="M6 40h6V22.5L4 16.5V38c0 1.1.9 2 2 2z"/>
+    <path fill="#34A853" d="M36 40h6c1.1 0 2-.9 2-2V16.5L36 22.5z"/>
+    <path fill="#FBBC05" d="M36 10l-12 9L12 10H6l18 13.5L42 10z"/>
+    <path fill="#4285F4" d="M4 16.5L12 22.5V10H6c-1.1 0-2 .9-2 2v4.5z"/>
+    <path fill="#C5221F" d="M42 10h-6v12.5l8-6V12c0-1.1-.9-2-2-2z"/>
+  </svg>
+);
+
+const OutlookIcon = () => (
+  <svg viewBox="0 0 48 48" width="28" height="28">
+    <path fill="#1976D2" d="M28 10h14c1.1 0 2 .9 2 2v24c0 1.1-.9 2-2 2H28V10z"/>
+    <path fill="#fff" d="M42 22H28v4h14v-4zm0 6H28v4h14v-4zm0-12H28v4h14v-4z"/>
+    <path fill="#0D47A1" d="M4 14l20-4v28L4 34V14z"/>
+    <ellipse cx="14" cy="24" rx="6" ry="7" fill="#fff"/>
+    <ellipse cx="14" cy="24" rx="4" ry="5" fill="#1976D2"/>
+  </svg>
+);
+
 const GMAIL_CONNECTOR_ID = "6a2a5b185cd48e6a3e73dbe0";
 const OUTLOOK_CONNECTOR_ID = "6a2a5b27725e857800ca8e5d";
 
@@ -107,13 +128,13 @@ export default function EmailSendenDialog({ open, onOpenChange, empfaenger, betr
               Verbinde dein E-Mail-Konto um Dokumente direkt zu versenden.
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-16 flex-col gap-1" onClick={() => handleConnect("gmail")}>
-                <span className="text-lg">📧</span>
+              <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => handleConnect("gmail")}>
+                <GmailIcon />
                 <span className="text-sm font-medium">Gmail verbinden</span>
                 <span className="text-xs text-muted-foreground">Google Konto</span>
               </Button>
-              <Button variant="outline" className="h-16 flex-col gap-1" onClick={() => handleConnect("outlook")}>
-                <span className="text-lg">📬</span>
+              <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => handleConnect("outlook")}>
+                <OutlookIcon />
                 <span className="text-sm font-medium">Outlook verbinden</span>
                 <span className="text-xs text-muted-foreground">Microsoft Konto</span>
               </Button>
@@ -126,27 +147,29 @@ export default function EmailSendenDialog({ open, onOpenChange, empfaenger, betr
               {connection.gmail && (
                 <button
                   onClick={() => setSelectedProvider("gmail")}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedProvider === "gmail" ? "bg-primary/10 border-primary text-primary font-medium" : "border-border text-muted-foreground hover:bg-accent"}`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors ${selectedProvider === "gmail" ? "bg-primary/10 border-primary text-primary font-medium" : "border-border text-muted-foreground hover:bg-accent"}`}
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Gmail
+                  <GmailIcon /> Gmail
+                  {selectedProvider === "gmail" && <CheckCircle2 className="w-3.5 h-3.5 ml-1" />}
                 </button>
               )}
               {connection.outlook && (
                 <button
                   onClick={() => setSelectedProvider("outlook")}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedProvider === "outlook" ? "bg-primary/10 border-primary text-primary font-medium" : "border-border text-muted-foreground hover:bg-accent"}`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors ${selectedProvider === "outlook" ? "bg-primary/10 border-primary text-primary font-medium" : "border-border text-muted-foreground hover:bg-accent"}`}
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Outlook
+                  <OutlookIcon /> Outlook
+                  {selectedProvider === "outlook" && <CheckCircle2 className="w-3.5 h-3.5 ml-1" />}
                 </button>
               )}
               {!connection.gmail && (
-                <button onClick={() => handleConnect("gmail")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-dashed text-sm text-muted-foreground hover:bg-accent">
-                  <ExternalLink className="w-3 h-3" /> Gmail verbinden
+                <button onClick={() => handleConnect("gmail")} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed text-sm text-muted-foreground hover:bg-accent">
+                  <GmailIcon /> Gmail verbinden
                 </button>
               )}
               {!connection.outlook && (
-                <button onClick={() => handleConnect("outlook")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-dashed text-sm text-muted-foreground hover:bg-accent">
-                  <ExternalLink className="w-3 h-3" /> Outlook verbinden
+                <button onClick={() => handleConnect("outlook")} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed text-sm text-muted-foreground hover:bg-accent">
+                  <OutlookIcon /> Outlook verbinden
                 </button>
               )}
             </div>
