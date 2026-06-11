@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import IntegrationKarte from "@/components/onboarding/IntegrationKarte";
+import EmailVerbindungStatus from "@/components/EmailVerbindungStatus";
 import { cn } from "@/lib/utils";
 import {
   Building2, Globe, CalendarDays, Star, MessageCircle, MessageSquare,
@@ -313,6 +314,7 @@ export default function FirmaEinstellungen() {
                 <h3 className="font-heading font-bold text-sm">E-Mail</h3>
                 {form.email_verbunden && <StatusBadge status="aktiv" />}
               </div>
+              <EmailVerbindungStatus />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { id: "microsoft365", name: "Microsoft 365", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/The_OFFICIAL_Outlookcom_Logo.png" alt="M365" className="w-5 h-5 object-contain" /> },
