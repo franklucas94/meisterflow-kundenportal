@@ -1,7 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-const GCAL_CONNECTOR_ID = "6a2a68df83a79531c222b4a6";
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -13,14 +11,14 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { termin, action } = body; // action: 'create' | 'update' | 'delete'
 
-    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(GCAL_CONNECTOR_ID);
+    // Shared connection — uses the builder's Google account
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlecalendar");
 
     const authHeader = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
 
-    // Build Google Calendar event object
     const buildEvent = (t) => {
       const startDate = t.datum;
       const time = t.uhrzeit || "09:00";
@@ -38,8 +36,8 @@ Deno.serve(async (req) => {
           t.kunde_name ? `Kunde: ${t.kunde_name}` : null,
           t.notizen || null,
         ].filter(Boolean).join('\n') || undefined,
-        start: { dateTime: `${startDateTime}`, timeZone: 'Europe/Zurich' },
-        end: { dateTime: `${endDateTime}`, timeZone: 'Europe/Zurich' },
+        start: { dateTime: startDateTime, timeZone: 'Europe/Zurich' },
+        end: { dateTime: endDateTime, timeZone: 'Europe/Zurich' },
       };
     };
 
