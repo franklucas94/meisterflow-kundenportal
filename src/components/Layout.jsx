@@ -13,7 +13,6 @@ import {
   Building2,
   Globe,
 } from "lucide-react";
-import { useOnboardingGuard } from "@/lib/useOnboardingGuard";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -30,7 +29,6 @@ const NAV = [
 export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  useOnboardingGuard();
 
   const isActive = (path) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
