@@ -7,7 +7,7 @@ export default function SchrittCard({
   titel,
   untertitel,
   icon: Icon,
-  kinder,
+  children: kinder,
   onWeiter,
   onZurueck,
   weiterText = "Weiter",

@@ -125,7 +125,7 @@ export default function SchrittDateien({ form, setForm, saving, onWeiter, onZuru
             form.whatsapp_verbunden && "WhatsApp ✓",
             form.stripe_verbunden && "Stripe ✓",
             form.dienstleistungen?.length > 0 && `${form.dienstleistungen.length} Dienstleistungen ✓`,
-            AUTOMATION_KEYS.filter(k => form[k]).length > 0 && `${AUTOMATION_KEYS.filter(k => form[k]).length} Automationen ✓`,
+            (form.automation_termine || form.automation_erinnerungen || form.automation_offerte_nachfassen) && "Automationen ✓",
           ].filter(Boolean).map((item) => (
             <p key={item} className="text-sm text-emerald-700 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" strokeWidth={3} /> {item}</p>
           ))}
