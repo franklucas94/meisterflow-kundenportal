@@ -16,8 +16,8 @@ export default function SchrittKommunikation({ form, setForm, saving, onWeiter, 
         <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2"><Mail className="w-4 h-4" /> E-Mail</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { id: "microsoft365", name: "Microsoft 365", beschreibung: "Office 365, Exchange", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/The_OFFICIAL_Outlookcom_Logo.png" alt="M365" className="w-6 h-6 object-contain" /> },
-            { id: "outlook", name: "Outlook", beschreibung: "Outlook Desktop & Web", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" className="w-6 h-6 object-contain" /> },
+            { id: "microsoft365", name: "Microsoft 365", beschreibung: "Office 365, Exchange", icon: <img src="https://media.base44.com/images/public/6a297868a33af4a7948610b3/ffbaaa4b1_Microsoft_iconsvg.png" alt="Microsoft" className="w-6 h-6 object-contain" /> },
+            { id: "outlook", name: "Outlook", beschreibung: "Outlook Desktop & Web", icon: <img src="https://media.base44.com/images/public/6a297868a33af4a7948610b3/f9380849e_Microsoft_Office_Outlook_20182024svg.png" alt="Outlook" className="w-6 h-6 object-contain" /> },
             { id: "gmail", name: "Gmail", beschreibung: "Google Mail, Google Workspace", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail" className="w-6 h-6 object-contain" /> },
             { id: "imap_smtp", name: "IMAP / SMTP", beschreibung: "Andere E-Mail-Anbieter", icon: <Mail className="w-6 h-6 text-muted-foreground" /> },
           ].map((opt) => (
@@ -41,8 +41,8 @@ export default function SchrittKommunikation({ form, setForm, saving, onWeiter, 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { id: "google", name: "Google Kalender", beschreibung: "Gmail, Google Workspace", icon: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" },
-            { id: "microsoft365", name: "Microsoft 365", beschreibung: "Office 365, Teams", icon: "https://upload.wikimedia.org/wikipedia/commons/4/45/The_OFFICIAL_Outlookcom_Logo.png" },
-            { id: "outlook", name: "Microsoft Outlook", beschreibung: "Outlook Desktop & Web", icon: "https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" },
+            { id: "microsoft365", name: "Microsoft 365", beschreibung: "Office 365, Teams", icon: "https://media.base44.com/images/public/6a297868a33af4a7948610b3/ffbaaa4b1_Microsoft_iconsvg.png" },
+            { id: "outlook", name: "Microsoft Outlook", beschreibung: "Outlook Desktop & Web", icon: "https://media.base44.com/images/public/6a297868a33af4a7948610b3/f9380849e_Microsoft_Office_Outlook_20182024svg.png" },
             { id: "apple", name: "Apple Kalender", beschreibung: "iCloud, iPhone, iPad", icon: "https://upload.wikimedia.org/wikipedia/commons/3/37/Apple_Calendar_Icon.png", bald: true },
           ].map((opt) => (
             <IntegrationKarte key={opt.id} name={opt.name} beschreibung={opt.beschreibung} icon={<img src={opt.icon} alt={opt.name} className="w-6 h-6 object-contain" />} bald={opt.bald} verbunden={form.kalender_verbunden === opt.id} selected={form.kalender_verbunden === opt.id} onSelect={() => setForm({ ...form, kalender_verbunden: form.kalender_verbunden === opt.id ? "" : opt.id })} />

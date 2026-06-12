@@ -42,6 +42,12 @@
     "hosting_zugang": {
       "type": "string"
     },
+    "hosting_password": {
+      "type": "string"
+    },
+    "cms_password": {
+      "type": "string"
+    },
     "hat_website": {
       "type": "boolean",
       "default": false
@@ -114,6 +120,9 @@
       "type": "string"
     },
     "stripe_zahlungslink": {
+      "type": "string"
+    },
+    "twint_zahlungslink": {
       "type": "string"
     },
     "onboarding_abgeschlossen": {

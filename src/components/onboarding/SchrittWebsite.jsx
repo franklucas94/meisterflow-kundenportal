@@ -3,7 +3,7 @@ import SchrittCard from "@/components/onboarding/SchrittCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Globe, Server, Lock } from "lucide-react";
+import { Globe, Server, Lock, Eye, EyeOff } from "lucide-react";
 
 const CMS_OPTIONEN = [
   { id: "wordpress", label: "WordPress" },
@@ -15,17 +15,19 @@ const CMS_OPTIONEN = [
   { id: "andere", label: "Andere" },
 ];
 
-export default function SchrittWebsite({ form, setForm, saving, onWeiter, onZurueck, onUeberspringen }) {
+export default function SchrittWebsite({ form, setForm, saving, onWeiter, onZurueck }) {
   const f = (k) => (e) => setForm({ ...form, [k]: typeof e === "boolean" ? e : e.target?.value ?? e });
 
+  const istAusgefuellt = form.domain && form.domain_registrar && form.hosting_anbieter && form.hosting_login_url && form.hosting_benutzername;
+
   return (
-    <SchrittCard titel="Website & Zugänge" untertitel="Damit unser Team Ihre Website übernehmen kann, benötigen wir Zugang zu Domain, Hosting und CMS." icon={Globe} saving={saving} ueberspringen onUeberspringen={onUeberspringen} onZurueck={onZurueck} onWeiter={() => onWeiter()}>
+    <SchrittCard titel="Website & Zugänge" untertitel="Damit unser Team Ihre Website übernehmen kann, benötigen wir Zugang zu Domain, Hosting und CMS." icon={Globe} saving={saving} onZurueck={onZurueck} weiterDisabled={!istAusgefuellt} onWeiter={() => onWeiter()}>
       {/* ── Domain ── */}
       <div className="space-y-3">
         <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2"><Globe className="w-4 h-4" /> Domain</p>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Domain</Label><Input value={form.domain} onChange={f("domain")} placeholder="www.meinefirma.ch" /></div>
-          <div className="space-y-1.5"><Label>Domain-Registrar</Label><Input value={form.domain_registrar} onChange={f("domain_registrar")} placeholder="Hostpoint, Infomaniak, IONOS…" /></div>
+          <div className="space-y-1.5"><Label>Domain *</Label><Input value={form.domain} onChange={f("domain")} placeholder="www.meinefirma.ch" /></div>
+          <div className="space-y-1.5"><Label>Domain-Registrar *</Label><Input value={form.domain_registrar} onChange={f("domain_registrar")} placeholder="Hostpoint, Infomaniak, IONOS…" /></div>
         </div>
         <div className="rounded-xl border border-border overflow-hidden divide-y divide-border">
           <div className="flex items-center justify-between p-4">
@@ -34,7 +36,7 @@ export default function SchrittWebsite({ form, setForm, saving, onWeiter, onZuru
           </div>
         </div>
         {!form.domain_zugang_delegiert && (
-          <div className="space-y-1.5"><Label>Domain Login-E-Mail</Label><Input value={form.domain_zugang_login} onChange={f("domain_zugang_login")} placeholder="admin@meinefirma.ch" /></div>
+          <div className="space-y-1.5"><Label>Domain Login-E-Mail *</Label><Input value={form.domain_zugang_login} onChange={f("domain_zugang_login")} placeholder="admin@meinefirma.ch" /></div>
         )}
       </div>
 
@@ -42,10 +44,13 @@ export default function SchrittWebsite({ form, setForm, saving, onWeiter, onZuru
       <div className="space-y-3 pt-2">
         <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2"><Server className="w-4 h-4" /> Hosting</p>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Hosting-Anbieter</Label><Input value={form.hosting_anbieter} onChange={f("hosting_anbieter")} placeholder="Hostpoint, Infomaniak, IONOS…" /></div>
-          <div className="space-y-1.5"><Label>Login URL</Label><Input value={form.hosting_login_url} onChange={f("hosting_login_url")} placeholder="https://admin.hostpoint.ch" /></div>
+          <div className="space-y-1.5"><Label>Hosting-Anbieter *</Label><Input value={form.hosting_anbieter} onChange={f("hosting_anbieter")} placeholder="Hostpoint, Infomaniak, IONOS…" /></div>
+          <div className="space-y-1.5"><Label>Login URL *</Label><Input value={form.hosting_login_url} onChange={f("hosting_login_url")} placeholder="https://admin.hostpoint.ch" /></div>
         </div>
-        <div className="space-y-1.5"><Label>Benutzername</Label><Input value={form.hosting_benutzername} onChange={f("hosting_benutzername")} /></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5"><Label>Benutzername *</Label><Input value={form.hosting_benutzername} onChange={f("hosting_benutzername")} /></div>
+          <div className="space-y-1.5"><Label>Passwort</Label><Input type="password" value={form.hosting_password || ""} onChange={f("hosting_password")} /></div>
+        </div>
       </div>
 
       {/* ── CMS ── */}
@@ -64,7 +69,10 @@ export default function SchrittWebsite({ form, setForm, saving, onWeiter, onZuru
         {form.cms_typ && form.cms_typ !== "andere" && (
           <>
             <div className="space-y-1.5"><Label>CMS Admin URL</Label><Input value={form.cms_admin_url} onChange={f("cms_admin_url")} placeholder={form.cms_typ === "wordpress" ? "https://meinefirma.ch/wp-admin" : "CMS Login URL"} /></div>
-            <div className="space-y-1.5"><Label>CMS Benutzername</Label><Input value={form.cms_benutzername} onChange={f("cms_benutzername")} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label>CMS Benutzername</Label><Input value={form.cms_benutzername} onChange={f("cms_benutzername")} /></div>
+              <div className="space-y-1.5"><Label>CMS Passwort</Label><Input type="password" value={form.cms_password || ""} onChange={f("cms_password")} /></div>
+            </div>
           </>
         )}
 

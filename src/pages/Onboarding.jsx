@@ -19,8 +19,8 @@ const INITIAL_FORM = {
   adresse: "", plz: "", ort: "", uid_nummer: "", logo_url: "", rechnungsadresse: "",
   domain: "", hosting_zugang: "", hat_website: false,
   domain_registrar: "", domain_zugang_login: "", domain_zugang_delegiert: false,
-  hosting_anbieter: "", hosting_login_url: "", hosting_benutzername: "",
-  cms_typ: "", cms_admin_url: "", cms_benutzername: "",
+  hosting_anbieter: "", hosting_login_url: "", hosting_benutzername: "", hosting_password: "",
+  cms_typ: "", cms_admin_url: "", cms_benutzername: "", cms_password: "",
   kalender_verbunden: "", google_verbunden: false,
   google_business_vorhanden: false, google_business_url: "",
   google_analytics_oauth: false, google_search_console_oauth: false,
@@ -29,7 +29,7 @@ const INITIAL_FORM = {
   email_verbunden: "", email_verbunden_adresse: "",
   branche: "", dienstleistungen: [], eigene_dienstleistung: "",
   google_bewertungslink: "",
-  stripe_zahlungslink: "", stripe_verbunden: false,
+  stripe_zahlungslink: "", stripe_verbunden: false, twint_zahlungslink: "",
   mwst_pflichtig: false, mwst_nummer: "", zahlungsfrist_tage: 30,
   iban: "", bankname: "", kontoinhaber: "", qr_rechnung: false,
   twint_aktiv: false, kreditkarten_aktiv: false, apple_pay_aktiv: false,
@@ -79,6 +79,7 @@ export default function Onboarding() {
     delete clean._agb_url_preview;
     delete clean._datenschutz_url_preview;
     delete clean._preisliste_url_preview;
+    delete clean.eigene_dienstleistung;
     return { ...clean, user_id: user?.id };
   };
 
@@ -106,7 +107,7 @@ export default function Onboarding() {
       setSchritt((s) => s + 1);
     } else {
       await speichern(update, true);
-      navigate("/");
+      window.location.href = "/";
     }
   };
 
