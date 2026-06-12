@@ -79,7 +79,6 @@ export default function Onboarding() {
     delete clean._agb_url_preview;
     delete clean._datenschutz_url_preview;
     delete clean._preisliste_url_preview;
-    delete clean.eigene_dienstleistung;
     return { ...clean, user_id: user?.id };
   };
 

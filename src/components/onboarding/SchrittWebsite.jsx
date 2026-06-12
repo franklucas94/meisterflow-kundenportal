@@ -3,7 +3,7 @@ import SchrittCard from "@/components/onboarding/SchrittCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Globe, Server, Lock, Eye, EyeOff } from "lucide-react";
+import { Globe, Server, Lock } from "lucide-react";
 
 const CMS_OPTIONEN = [
   { id: "wordpress", label: "WordPress" },
