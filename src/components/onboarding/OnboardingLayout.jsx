@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 import { Check, Home } from "lucide-react";
 
 const SCHRITTE = [
-  "Firmendaten",
+  "Firma",
   "Website",
-  "Kalender",
   "Google",
-  "WhatsApp",
-  "E-Mail",
-  "Dienstleistungen",
-  "Bewertungslink",
+  "Kommunikation",
+  "Zahlungen",
+  "Automationen",
+  "KI & Betrieb",
+  "Dateien & Übergabe",
 ];
 
 export default function OnboardingLayout({ schritt, kinder, children }) {
@@ -70,7 +70,7 @@ export default function OnboardingLayout({ schritt, kinder, children }) {
                     </span>
                   </div>
                   {i < SCHRITTE.length - 1 && (
-                    <div className={cn("h-px w-4 md:w-6", done ? "bg-emerald-400" : "bg-border")} />
+                    <div className={cn("h-px w-3 md:w-5", done ? "bg-emerald-400" : "bg-border")} />
                   )}
                 </React.Fragment>
               );

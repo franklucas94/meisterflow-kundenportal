@@ -114,8 +114,7 @@
       "type": "string"
     },
     "stripe_zahlungslink": {
-      "type": "string",
-      "description": "Stripe Zahlungslink (https://buy.stripe.com/...)"
+      "type": "string"
     },
     "onboarding_abgeschlossen": {
       "type": "boolean",
@@ -124,6 +123,191 @@
     "onboarding_schritt": {
       "type": "number",
       "default": 1
+    },
+    "domain_registrar": {
+      "type": "string"
+    },
+    "domain_zugang_login": {
+      "type": "string"
+    },
+    "domain_zugang_delegiert": {
+      "type": "boolean",
+      "default": false
+    },
+    "hosting_anbieter": {
+      "type": "string"
+    },
+    "hosting_login_url": {
+      "type": "string"
+    },
+    "hosting_benutzername": {
+      "type": "string"
+    },
+    "cms_typ": {
+      "type": "string",
+      "enum": [
+        "",
+        "wordpress",
+        "wix",
+        "webflow",
+        "shopify",
+        "joomla",
+        "typo3",
+        "andere"
+      ],
+      "default": ""
+    },
+    "cms_admin_url": {
+      "type": "string"
+    },
+    "cms_benutzername": {
+      "type": "string"
+    },
+    "google_business_vorhanden": {
+      "type": "boolean",
+      "default": false
+    },
+    "google_business_url": {
+      "type": "string"
+    },
+    "google_analytics_oauth": {
+      "type": "boolean",
+      "default": false
+    },
+    "google_search_console_oauth": {
+      "type": "boolean",
+      "default": false
+    },
+    "mwst_pflichtig": {
+      "type": "boolean",
+      "default": false
+    },
+    "mwst_nummer": {
+      "type": "string"
+    },
+    "zahlungsfrist_tage": {
+      "type": "number",
+      "default": 30
+    },
+    "iban": {
+      "type": "string"
+    },
+    "bankname": {
+      "type": "string"
+    },
+    "kontoinhaber": {
+      "type": "string"
+    },
+    "qr_rechnung": {
+      "type": "boolean",
+      "default": false
+    },
+    "stripe_verbunden": {
+      "type": "boolean",
+      "default": false
+    },
+    "twint_aktiv": {
+      "type": "boolean",
+      "default": false
+    },
+    "kreditkarten_aktiv": {
+      "type": "boolean",
+      "default": false
+    },
+    "apple_pay_aktiv": {
+      "type": "boolean",
+      "default": false
+    },
+    "google_pay_aktiv": {
+      "type": "boolean",
+      "default": false
+    },
+    "rechnung_zahlung": {
+      "type": "boolean",
+      "default": true
+    },
+    "bar_zahlung": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_termine": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_erinnerungen": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_offerte_nachfassen": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_rechnung_erinnerung": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_bewertungsanfrage": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_wiederkehrend": {
+      "type": "boolean",
+      "default": false
+    },
+    "automation_whatsapp": {
+      "type": "boolean",
+      "default": false
+    },
+    "mitarbeiter_anzahl": {
+      "type": "number",
+      "default": 1
+    },
+    "regionen": {
+      "type": "string"
+    },
+    "oeffnungszeiten": {
+      "type": "string"
+    },
+    "notfallservice": {
+      "type": "boolean",
+      "default": false
+    },
+    "unternehmensbeschreibung": {
+      "type": "string"
+    },
+    "auftragsablauf": {
+      "type": "string"
+    },
+    "zugangsdaten_speichern": {
+      "type": "boolean",
+      "default": false
+    },
+    "firma_bilder_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "agb_url": {
+      "type": "string"
+    },
+    "datenschutz_url": {
+      "type": "string"
+    },
+    "preisliste_url": {
+      "type": "string"
+    },
+    "broschuere_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "zertifikate_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": []
