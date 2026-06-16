@@ -6,7 +6,6 @@ import { formatCHF } from "@/lib/format";
 import { TrendingUp, Clock, AlertTriangle, CreditCard, ArrowDownCircle, Percent, CheckCircle2, Receipt, Send, Bell, ThumbsUp } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { format, subDays, startOfMonth } from "date-fns";
-import { de } from "date-fns/locale";
 
 export default function FinanzenDashboard() {
   const { data: rechnungen = [] } = useQuery({
@@ -39,25 +38,25 @@ export default function FinanzenDashboard() {
     const betrag = rechnungen
       .filter((r) => r.status === "bezahlt" && (r.datum || "").startsWith(monthKey))
       .reduce((s, r) => s + (r.betrag || 0), 0);
-    return { monat: format(d, "MMM", { locale: de }), betrag };
+    return { monat: format(d, "MMM"), betrag };
   });
 
   const recentActivities = [
     ...rechnungen.filter((r) => r.status === "bezahlt").slice(0, 2).map((r) => ({
-      icon: CheckCircle2, color: "text-emerald-600", label: `Rechnung bezahlt – ${r.kunde_name || r.nummer}`, datum: r.datum,
+      icon: CheckCircle2, color: "text-emerald-600", label: `Invoice paid – ${r.kunde_name || r.nummer}`, datum: r.datum,
     })),
     ...offerten.filter((o) => o.status === "akzeptiert").slice(0, 2).map((o) => ({
-      icon: ThumbsUp, color: "text-primary", label: `Offerte akzeptiert – ${o.kunde_name || o.nummer}`, datum: o.datum,
+      icon: ThumbsUp, color: "text-primary", label: `Quote accepted – ${o.kunde_name || o.nummer}`, datum: o.datum,
     })),
   ]
     .sort((a, b) => (b.datum || "").localeCompare(a.datum || ""))
     .slice(0, 5);
 
   const kpis = [
-    { label: "Monatsumsatz", value: formatCHF(monatsumsatz), icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Offene Rechnungen", value: formatCHF(offenerBetrag), sub: `${offeneRechnungen.length} Rechnungen`, icon: Clock, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Überfällig", value: formatCHF(ueberfaelligBetrag), sub: `${ueberfaellig.length} Rechnungen`, icon: AlertTriangle, color: "text-red-500", bg: "bg-red-50" },
-    { label: "Gesamt bezahlt", value: formatCHF(onlineBezahlt), icon: CreditCard, color: "text-violet-600", bg: "bg-violet-50" },
+    { label: "Monthly Revenue", value: formatCHF(monatsumsatz), icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Open Invoices", value: formatCHF(offenerBetrag), sub: `${offeneRechnungen.length} invoices`, icon: Clock, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Overdue", value: formatCHF(ueberfaelligBetrag), sub: `${ueberfaellig.length} invoices`, icon: AlertTriangle, color: "text-red-500", bg: "bg-red-50" },
+    { label: "Total Paid", value: formatCHF(onlineBezahlt), icon: CreditCard, color: "text-violet-600", bg: "bg-violet-50" },
   ];
 
   return (
@@ -83,7 +82,7 @@ export default function FinanzenDashboard() {
       {/* Chart + Activity */}
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2 p-5">
-          <h3 className="font-heading font-bold text-sm mb-4">Umsatz – letzte 12 Monate</h3>
+          <h3 className="font-heading font-bold text-sm mb-4">Revenue – last 12 months</h3>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={chartData}>
               <defs>
@@ -101,9 +100,9 @@ export default function FinanzenDashboard() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="font-heading font-bold text-sm mb-4">Letzte Aktivitäten</h3>
+          <h3 className="font-heading font-bold text-sm mb-4">Recent Activity</h3>
           {recentActivities.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Keine Aktivitäten vorhanden.</p>
+            <p className="text-sm text-muted-foreground">No activity yet.</p>
           ) : (
             <div className="space-y-3">
               {recentActivities.map((a, i) => (

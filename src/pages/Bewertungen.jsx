@@ -37,11 +37,11 @@ export default function Bewertungen() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Bewertungen"
-        subtitle={`${erhaltene.length} Bewertungen · Durchschnitt ${durchschnitt} ★`}
+        title="Reviews"
+        subtitle={`${erhaltene.length} reviews · Average ${durchschnitt} ★`}
       >
         <Button onClick={() => setAnfordernOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Bewertung anfordern
+          <Plus className="w-4 h-4 mr-1.5" /> Request Review
         </Button>
       </PageHeader>
 

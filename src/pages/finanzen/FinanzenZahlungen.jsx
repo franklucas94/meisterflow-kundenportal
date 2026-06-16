@@ -24,10 +24,10 @@ export default function FinanzenZahlungen() {
     .reduce((s, r) => s + (r.betrag || 0), 0);
 
   const kpis = [
-    { label: "Heute", value: formatCHF(sumBy(today)) },
-    { label: "Diese Woche", value: formatCHF(sumBy(weekStart)) },
-    { label: "Dieser Monat", value: formatCHF(sumBy(monthStart)) },
-    { label: "Dieses Jahr", value: formatCHF(sumBy(yearStart)) },
+    { label: "Today", value: formatCHF(sumBy(today)) },
+    { label: "This Week", value: formatCHF(sumBy(weekStart)) },
+    { label: "This Month", value: formatCHF(sumBy(monthStart)) },
+    { label: "This Year", value: formatCHF(sumBy(yearStart)) },
   ];
 
   return (
@@ -42,9 +42,9 @@ export default function FinanzenZahlungen() {
       </div>
 
       <Card className="p-5">
-        <h3 className="font-heading font-bold text-sm mb-4">Zahlungseingang</h3>
+        <h3 className="font-heading font-bold text-sm mb-4">Payment Receipts</h3>
         {bezahlt.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">Noch keine Zahlungen vorhanden.</p>
+          <p className="text-sm text-muted-foreground py-6 text-center">No payments yet.</p>
         ) : (
           <div className="space-y-3">
             {bezahlt.slice(0, 20).map((r) => (
@@ -68,8 +68,8 @@ export default function FinanzenZahlungen() {
 
       <Card className="p-5 border-dashed border-2 border-muted-foreground/20">
         <div className="text-center py-4">
-          <div className="text-sm font-semibold text-muted-foreground mb-1">Online-Zahlungen (TWINT, Kreditkarte)</div>
-          <p className="text-xs text-muted-foreground">Detaillierte Zahlungsart-Auswertung folgt mit der Stripe-Integration.</p>
+          <div className="text-sm font-semibold text-muted-foreground mb-1">Online Payments (TWINT, Credit Card)</div>
+          <p className="text-xs text-muted-foreground">Detailed payment method breakdown coming with Stripe integration.</p>
         </div>
       </Card>
     </div>

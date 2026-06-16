@@ -87,7 +87,7 @@ export default function KundenDetail() {
     .reduce((sum, r) => sum + (r.betrag || 0), 0);
 
   if (!kunde) {
-    return <div className="text-sm text-muted-foreground">Kunde wird geladen…</div>;
+    return <div className="text-sm text-muted-foreground">Loading customer…</div>;
   }
 
   return (
@@ -96,7 +96,7 @@ export default function KundenDetail() {
         to="/kunden"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" /> Zurück zur Kundenübersicht
+        <ArrowLeft className="w-4 h-4" /> Back to Customers
       </Link>
 
       <div className="flex items-center gap-4 mb-8">
@@ -111,7 +111,7 @@ export default function KundenDetail() {
             <StatusBadge status={kunde.status} />
           </div>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Kunde seit {formatDatum(kunde.created_date)}
+            Customer since {formatDatum(kunde.created_date)}
           </p>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function KundenDetail() {
           {/* Kontaktinformationen */}
           <Card className="p-5">
             <h3 className="font-heading font-bold text-sm text-foreground mb-4">
-              Kontaktinformationen
+              Contact Information
             </h3>
             <div className="space-y-3 text-sm">
               {(kunde.vorname || kunde.nachname) && (
@@ -152,7 +152,7 @@ export default function KundenDetail() {
           {kunde.notizen && (
             <Card className="p-5">
               <h3 className="font-heading font-bold text-sm text-foreground mb-3 flex items-center gap-2">
-                <StickyNote className="w-4 h-4 text-primary" /> Notizen
+                <StickyNote className="w-4 h-4 text-primary" /> Notes
               </h3>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{kunde.notizen}</p>
             </Card>
@@ -161,13 +161,13 @@ export default function KundenDetail() {
           {/* Umsatz */}
           <Card className="p-5">
             <h3 className="font-heading font-bold text-sm text-foreground mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> Umsatz
+              <TrendingUp className="w-4 h-4 text-primary" /> Revenue
             </h3>
             <p className="text-2xl font-extrabold font-heading text-foreground">
               {formatCHF(umsatz)}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {rechnungen.filter((r) => r.status === "bezahlt").length} bezahlte Rechnung{rechnungen.filter((r) => r.status === "bezahlt").length !== 1 ? "en" : ""}
+              {rechnungen.filter((r) => r.status === "bezahlt").length} paid invoice{rechnungen.filter((r) => r.status === "bezahlt").length !== 1 ? "s" : ""}
             </p>
           </Card>
         </div>
@@ -175,39 +175,39 @@ export default function KundenDetail() {
         {/* Historien */}
         <div className="lg:col-span-2 space-y-5">
           <HistorieSektion
-            titel="Anfragen"
+            titel="Inquiries"
             icon={Inbox}
-            leerText="Keine Anfragen vorhanden."
+            leerText="No inquiries yet."
             onKlick={(item) => setDialog({ typ: "anfrage", item })}
             eintraege={anfragen.map((a) => ({ id: a.id, raw: a, text: a.betreff, sub: formatDatum(a.created_date), status: a.status }))}
           />
           <HistorieSektion
-            titel="Termine"
+            titel="Appointments"
             icon={CalendarDays}
-            leerText="Keine Termine vorhanden."
+            leerText="No appointments yet."
             onKlick={(item) => setDialog({ typ: "termin", item })}
             eintraege={termine.map((t) => ({ id: t.id, raw: t, text: t.titel, sub: `${formatDatum(t.datum)} · ${t.uhrzeit || ""}`, status: t.status }))}
           />
           <HistorieSektion
-            titel="Offerten"
+            titel="Quotes"
             icon={FileText}
-            leerText="Keine Offerten vorhanden."
+            leerText="No quotes yet."
             onKlick={(item) => setDialog({ typ: "offerte", item })}
             eintraege={offerten.map((o) => ({ id: o.id, raw: o, text: `${o.nummer} – ${o.titel || ""}`, sub: `${formatDatum(o.datum)} · ${formatCHF(o.betrag_einmalig)} + ${formatCHF(o.betrag_monatlich)}/Mt.`, status: o.status }))}
           />
           <HistorieSektion
-            titel="Rechnungen"
+            titel="Invoices"
             icon={Receipt}
-            leerText="Keine Rechnungen vorhanden."
+            leerText="No invoices yet."
             onKlick={(item) => setDialog({ typ: "rechnung", item })}
             eintraege={rechnungen.map((r) => ({ id: r.id, raw: r, text: `${r.nummer} – ${r.titel || ""}`, sub: `${formatDatum(r.datum)} · ${formatCHF(r.betrag)}`, status: r.status }))}
           />
           <HistorieSektion
-            titel="Bewertungen"
+            titel="Reviews"
             icon={Star}
-            leerText="Keine Bewertungen vorhanden."
+            leerText="No reviews yet."
             onKlick={(item) => setDialog({ typ: "bewertung", item })}
-            eintraege={bewertungen.map((b) => ({ id: b.id, raw: b, text: b.sterne ? `${"★".repeat(b.sterne)}${"☆".repeat(5 - b.sterne)}` : "Bewertung angefragt", sub: b.kommentar, status: b.status }))}
+            eintraege={bewertungen.map((b) => ({ id: b.id, raw: b, text: b.sterne ? `${"★".repeat(b.sterne)}${"☆".repeat(5 - b.sterne)}` : "Review requested", sub: b.kommentar, status: b.status }))}
           />
         </div>
       </div>

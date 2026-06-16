@@ -20,20 +20,20 @@ import { Plus, Building2, Clock, Trash2, StickyNote, BellRing } from "lucide-rea
 
 export const HERKUNFT_LABELS = {
   website: "Website",
-  telefon: "Telefon",
-  empfehlung: "Empfehlung",
+  telefon: "Phone",
+  empfehlung: "Referral",
   google: "Google",
-  social_media: "Soziale Medien",
-  sonstige: "Sonstige",
+  social_media: "Social Media",
+  sonstige: "Other",
 };
 
 const STATUS_OPTIONEN = ["neu", "in_bearbeitung", "offeriert", "gewonnen", "verloren"];
 const STATUS_LABELS = {
-  neu: "Neu",
-  in_bearbeitung: "In Bearbeitung",
-  offeriert: "Offeriert",
-  gewonnen: "Gewonnen",
-  verloren: "Verloren",
+  neu: "New",
+  in_bearbeitung: "In Progress",
+  offeriert: "Quoted",
+  gewonnen: "Won",
+  verloren: "Lost",
 };
 
 export default function Anfragen() {
@@ -61,26 +61,26 @@ export default function Anfragen() {
 
   return (
     <div>
-      <PageHeader title="Anfragen" subtitle={`${anfragen.length} Anfragen insgesamt`}>
+      <PageHeader title="Inquiries" subtitle={`${anfragen.length} inquiries total`}>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-40 bg-card">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="alle">Alle Status</SelectItem>
+            <SelectItem value="alle">All Statuses</SelectItem>
             {STATUS_OPTIONEN.map((s) => (
               <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Neue Anfrage
+          <Plus className="w-4 h-4 mr-1.5" /> New Inquiry
         </Button>
       </PageHeader>
 
       <div className="space-y-3">
         {filtered.length === 0 && (
-          <Card className="p-10 text-center text-muted-foreground text-sm">Keine Anfragen gefunden.</Card>
+          <Card className="p-10 text-center text-muted-foreground text-sm">No inquiries found.</Card>
         )}
         {filtered.map((a) => (
           <Card key={a.id} className="p-5 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setEditAnfrage(a)}>
@@ -103,11 +103,11 @@ export default function Anfragen() {
                 )}
                 <div className="flex flex-wrap items-center gap-4 text-xs pt-0.5">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Clock className="w-3.5 h-3.5" /> Eingegangen am {formatDatum(a.created_date)}
+                    <Clock className="w-3.5 h-3.5" /> Received on {formatDatum(a.created_date)}
                   </span>
                   {a.nachfassung_datum && (
                     <span className={`flex items-center gap-1.5 font-medium ${istUeberfaellig(a.nachfassung_datum) ? "text-red-600" : "text-primary"}`}>
-                      <BellRing className="w-3.5 h-3.5" /> Nachfassung: {formatDatum(a.nachfassung_datum)}
+                      <BellRing className="w-3.5 h-3.5" /> Follow-up: {formatDatum(a.nachfassung_datum)}
                     </span>
                   )}
                   {a.notizen && (

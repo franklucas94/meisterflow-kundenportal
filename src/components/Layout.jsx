@@ -16,14 +16,14 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { label: "Übersicht", path: "/", icon: LayoutGrid },
-  { label: "Kunden", path: "/kunden", icon: Users },
-  { label: "Anfragen", path: "/anfragen", icon: Inbox },
-  { label: "Termine", path: "/termine", icon: CalendarDays },
+  { label: "Overview", path: "/", icon: LayoutGrid },
+  { label: "Customers", path: "/kunden", icon: Users },
+  { label: "Inquiries", path: "/anfragen", icon: Inbox },
+  { label: "Appointments", path: "/termine", icon: CalendarDays },
   { label: "Website", path: "/website", icon: Globe },
-  { label: "Bewertungen", path: "/bewertungen", icon: Star },
-  { label: "Finanzen", path: "/finanzen", icon: Wallet },
-  { label: "Firma", path: "/firma", icon: Building2 },
+  { label: "Reviews", path: "/bewertungen", icon: Star },
+  { label: "Finance", path: "/finanzen", icon: Wallet },
+  { label: "Company", path: "/firma", icon: Building2 },
 ];
 
 export default function Layout() {
@@ -48,7 +48,7 @@ export default function Layout() {
                   <span className="text-blue-600">Flow</span>
                 </div>
                 <div className="text-[9px] font-semibold tracking-[0.25em] text-blue-600 mt-0.5">
-                  KUNDENPORTAL
+                  CUSTOMER PORTAL
                 </div>
               </div>
             </Link>

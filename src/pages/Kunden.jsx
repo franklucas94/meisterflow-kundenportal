@@ -59,11 +59,11 @@ export default function Kunden() {
 
   return (
     <div>
-      <PageHeader title="Kunden" subtitle={`${kunden.length} Kunden insgesamt`}>
+      <PageHeader title="Customers" subtitle={`${kunden.length} customers total`}>
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Kunden suchen…"
+            placeholder="Search customers…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 w-56 bg-card"
@@ -71,18 +71,18 @@ export default function Kunden() {
         </div>
         <Button variant="outline" onClick={() => csvRef.current?.click()} disabled={importing}>
           {importing ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Upload className="w-4 h-4 mr-1.5" />}
-          CSV importieren
+          Import CSV
         </Button>
         <input ref={csvRef} type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
         <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Neuer Kunde
+          <Plus className="w-4 h-4 mr-1.5" /> New Customer
         </Button>
       </PageHeader>
 
       <div className="space-y-3">
         {!isLoading && filtered.length === 0 && (
           <Card className="p-10 text-center text-muted-foreground text-sm">
-            Keine Kunden gefunden.
+            No customers found.
           </Card>
         )}
         {filtered.map((k) => (

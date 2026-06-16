@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { formatCHF } from "@/lib/format";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { format, startOfMonth, subMonths } from "date-fns";
-import { de } from "date-fns/locale";
 
 export default function FinanzenBerichte() {
   const [zeitraum, setZeitraum] = useState("12");
@@ -23,13 +22,13 @@ export default function FinanzenBerichte() {
     const betrag = rechnungen
       .filter((r) => r.status === "bezahlt" && (r.datum || "").startsWith(monthKey))
       .reduce((s, r) => s + (r.betrag || 0), 0);
-    return { monat: format(d, monate > 6 ? "MMM" : "MMMM", { locale: de }), betrag };
+    return { monat: format(d, monate > 6 ? "MMM" : "MMMM"), betrag };
   });
 
   // Top Kunden
   const kundenMap = {};
   rechnungen.filter((r) => r.status === "bezahlt").forEach((r) => {
-    const name = r.kunde_name || "Unbekannt";
+    const name = r.kunde_name || "Unknown";
     kundenMap[name] = (kundenMap[name] || 0) + (r.betrag || 0);
   });
   const topKunden = Object.entries(kundenMap)
@@ -56,11 +55,11 @@ export default function FinanzenBerichte() {
       {/* Umsatz Chart */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-heading font-bold">Umsatz</h3>
+          <h3 className="font-heading font-bold">Revenue</h3>
           <div className="flex gap-1.5">
             {["3", "6", "12"].map((z) => (
               <Button key={z} variant={zeitraum === z ? "default" : "outline"} size="sm" onClick={() => setZeitraum(z)}>
-                {z} Monate
+                {z} months
               </Button>
             ))}
           </div>
@@ -82,9 +81,9 @@ export default function FinanzenBerichte() {
       <div className="grid md:grid-cols-2 gap-4">
         {/* Top Kunden */}
         <Card className="p-5">
-          <h3 className="font-heading font-bold text-sm mb-4">Top Kunden</h3>
+          <h3 className="font-heading font-bold text-sm mb-4">Top Customers</h3>
           {topKunden.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Keine Daten vorhanden.</p>
+            <p className="text-sm text-muted-foreground">No data available.</p>
           ) : (
             <div className="space-y-3">
               {topKunden.map(([name, betrag], i) => (
@@ -102,12 +101,12 @@ export default function FinanzenBerichte() {
 
         {/* Offene Forderungen */}
         <Card className="p-5">
-          <h3 className="font-heading font-bold text-sm mb-4">Offene Forderungen nach Alter</h3>
+          <h3 className="font-heading font-bold text-sm mb-4">Open Receivables by Age</h3>
           <div className="space-y-3">
             {[
-              { label: "0–30 Tage", betrag: bis30, color: "bg-amber-400" },
-              { label: "30–60 Tage", betrag: bis60, color: "bg-orange-500" },
-              { label: "60+ Tage", betrag: ueber60, color: "bg-red-500" },
+              { label: "0–30 days", betrag: bis30, color: "bg-amber-400" },
+              { label: "30–60 days", betrag: bis60, color: "bg-orange-500" },
+              { label: "60+ days", betrag: ueber60, color: "bg-red-500" },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

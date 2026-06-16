@@ -9,11 +9,11 @@ import AutomatisierungDialog from "@/components/forms/AutomatisierungDialog";
 import { Plus, Mail, MessageSquare, MessageCircle, Star, CalendarDays, Trash2, Zap } from "lucide-react";
 
 export const TYP_CONFIG = {
-  email: { label: "E-Mail", icon: Mail, color: "bg-blue-50 text-blue-600" },
+  email: { label: "Email", icon: Mail, color: "bg-blue-50 text-blue-600" },
   sms: { label: "SMS", icon: MessageSquare, color: "bg-violet-50 text-violet-600" },
   whatsapp: { label: "WhatsApp", icon: MessageCircle, color: "bg-emerald-50 text-emerald-600" },
-  bewertung: { label: "Bewertung", icon: Star, color: "bg-amber-50 text-amber-600" },
-  termin: { label: "Termin", icon: CalendarDays, color: "bg-sky-50 text-sky-600" },
+  bewertung: { label: "Review", icon: Star, color: "bg-amber-50 text-amber-600" },
+  termin: { label: "Appointment", icon: CalendarDays, color: "bg-sky-50 text-sky-600" },
 };
 
 export default function Automatisierungen() {
@@ -39,18 +39,18 @@ export default function Automatisierungen() {
   return (
     <div>
       <PageHeader
-        title="Automatisierungen"
-        subtitle={`${automatisierungen.length} Automatisierungen · ${aktiveAnzahl} aktiv`}
+        title="Automations"
+        subtitle={`${automatisierungen.length} automations · ${aktiveAnzahl} active`}
       >
         <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Neue Automatisierung
+          <Plus className="w-4 h-4 mr-1.5" /> New Automation
         </Button>
       </PageHeader>
 
       <div className="grid md:grid-cols-2 gap-4">
         {automatisierungen.length === 0 && (
           <Card className="p-10 text-center text-muted-foreground text-sm md:col-span-2">
-            Noch keine Automatisierungen eingerichtet.
+            No automations set up yet.
           </Card>
         )}
         {automatisierungen.map((a) => {
@@ -69,7 +69,7 @@ export default function Automatisierungen() {
                   <div className="min-w-0">
                     <p className="font-semibold text-foreground">{a.name}</p>
                     <p className="text-xs font-medium text-primary mt-0.5 flex items-center gap-1">
-                      <Zap className="w-3 h-3" /> {cfg.label}-Automatisierung
+                      <Zap className="w-3 h-3" /> {cfg.label} Automation
                     </p>
                   </div>
                 </div>
@@ -80,7 +80,7 @@ export default function Automatisierungen() {
               </div>
               {a.ausloeser && (
                 <p className="text-sm text-foreground mt-3.5">
-                  <span className="text-muted-foreground">Auslöser:</span> {a.ausloeser}
+                <span className="text-muted-foreground">Trigger:</span> {a.ausloeser}
                 </p>
               )}
               {a.beschreibung && (

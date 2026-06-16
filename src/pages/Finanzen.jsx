@@ -31,19 +31,19 @@ import { useToast } from "@/components/ui/use-toast";
 
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "offerten", label: "Offerten", icon: FileText },
-  { id: "rechnungen", label: "Rechnungen", icon: Receipt },
-  { id: "zahlungen", label: "Zahlungen", icon: CreditCard },
-  { id: "mahnungen", label: "Mahnungen", icon: Bell },
-  { id: "berichte", label: "Berichte", icon: BarChart3 },
-  { id: "auszahlungen", label: "Auszahlungen", icon: ArrowDownCircle },
-  { id: "gebuehren", label: "Gebühren", icon: Percent },
-  { id: "abonnemente", label: "Abonnemente", icon: Package },
-  { id: "einstellungen", label: "Einstellungen", icon: Settings },
+  { id: "offerten", label: "Quotes", icon: FileText },
+  { id: "rechnungen", label: "Invoices", icon: Receipt },
+  { id: "zahlungen", label: "Payments", icon: CreditCard },
+  { id: "mahnungen", label: "Reminders", icon: Bell },
+  { id: "berichte", label: "Reports", icon: BarChart3 },
+  { id: "auszahlungen", label: "Payouts", icon: ArrowDownCircle },
+  { id: "gebuehren", label: "Fees", icon: Percent },
+  { id: "abonnemente", label: "Subscriptions", icon: Package },
+  { id: "einstellungen", label: "Settings", icon: Settings },
 ];
 
-const RECHNUNG_STATUS = { offen: "Offen", bezahlt: "Bezahlt", ueberfaellig: "Überfällig", storniert: "Storniert" };
-const OFFERTE_STATUS = { entwurf: "Entwurf", gesendet: "Gesendet", akzeptiert: "Akzeptiert", abgelehnt: "Abgelehnt" };
+const RECHNUNG_STATUS = { offen: "Open", bezahlt: "Paid", ueberfaellig: "Overdue", storniert: "Cancelled" };
+const OFFERTE_STATUS = { entwurf: "Draft", gesendet: "Sent", akzeptiert: "Accepted", abgelehnt: "Rejected" };
 
 export default function Finanzen() {
   const [tab, setTab] = useState("dashboard");
@@ -115,7 +115,7 @@ export default function Finanzen() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["rechnungen"] });
-      toast({ title: "Rechnung erstellt", description: "Offerte wurde erfolgreich umgewandelt." });
+      toast({ title: "Invoice created", description: "Quote was successfully converted." });
     },
   });
 
@@ -128,7 +128,7 @@ export default function Finanzen() {
     e?.stopPropagation();
     const doc = generateOffertePDF(offerte);
     doc.save(`Offerte-${offerte.nummer}.pdf`);
-    toast({ title: "PDF heruntergeladen" });
+    toast({ title: "PDF downloaded" });
   };
 
   const filteredR = statusFilterR === "alle" ? rechnungen : rechnungen.filter((r) => r.status === statusFilterR);
@@ -148,17 +148,17 @@ export default function Finanzen() {
             <Select value={statusFilterO} onValueChange={setStatusFilterO}>
               <SelectTrigger className="w-40 bg-card"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="alle">Alle Status</SelectItem>
+                <SelectItem value="alle">All Statuses</SelectItem>
                 {Object.entries(OFFERTE_STATUS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
               </SelectContent>
             </Select>
             <Button onClick={() => navigate("/offerten/erstellen")}>
-              <Plus className="w-4 h-4 mr-1.5" /> Neue Offerte
+              <Plus className="w-4 h-4 mr-1.5" /> New Quote
             </Button>
           </div>
           <OffertenOverview offerten={offerten} />
           <div className="space-y-3">
-            {filteredO.length === 0 && <Card className="p-10 text-center text-muted-foreground text-sm">Keine Offerten gefunden.</Card>}
+            {filteredO.length === 0 && <Card className="p-10 text-center text-muted-foreground text-sm">No quotes found.</Card>}
             {filteredO.map((o) => (
               <Card key={o.id} className="p-5 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setEditOfferte(o)}>
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -173,12 +173,12 @@ export default function Finanzen() {
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1.5"><CalendarDays className="w-4 h-4" />{formatDatum(o.datum)}</span>
                       <span>{formatCHF(o.betrag_einmalig)} + {formatCHF(o.betrag_monatlich)}/Mt.</span>
-                      {o.gueltig_bis && <span className="text-xs font-medium text-amber-600">Gültig bis {formatDatum(o.gueltig_bis)}</span>}
+                      {o.gueltig_bis && <span className="text-xs font-medium text-amber-600">Valid until {formatDatum(o.gueltig_bis)}</span>}
                     </div>
                     {o.leistungen?.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 pt-1">
                         {o.leistungen.slice(0, 4).map((l) => <Badge key={l} variant="outline" className="font-normal">{l}</Badge>)}
-                        {o.leistungen.length > 4 && <Badge variant="outline" className="font-normal">+{o.leistungen.length - 4} weitere</Badge>}
+                        {o.leistungen.length > 4 && <Badge variant="outline" className="font-normal">+{o.leistungen.length - 4} more</Badge>}
                       </div>
                     )}
                   </div>
@@ -201,7 +201,7 @@ export default function Finanzen() {
                     </div>
                     {o.status === "akzeptiert" && (
                       <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={umwandeln.isPending} onClick={(e) => { e.stopPropagation(); umwandeln.mutate(o); }}>
-                        <Receipt className="w-4 h-4 mr-1.5" /> In Rechnung umwandeln
+                        <Receipt className="w-4 h-4 mr-1.5" /> Convert to Invoice
                       </Button>
                     )}
                   </div>
@@ -222,16 +222,16 @@ export default function Finanzen() {
             <Select value={statusFilterR} onValueChange={setStatusFilterR}>
               <SelectTrigger className="w-full sm:w-40 bg-card"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="alle">Alle Status</SelectItem>
+                <SelectItem value="alle">All Statuses</SelectItem>
                 {Object.entries(RECHNUNG_STATUS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
               </SelectContent>
             </Select>
             <Button onClick={() => navigate("/rechnungen/erstellen")} className="w-full sm:w-auto">
-              <Plus className="w-4 h-4 mr-1.5" /> Neue Rechnung
+              <Plus className="w-4 h-4 mr-1.5" /> New Invoice
             </Button>
           </div>
           <div className="space-y-3">
-            {filteredR.length === 0 && <Card className="p-10 text-center text-muted-foreground text-sm">Keine Rechnungen gefunden.</Card>}
+            {filteredR.length === 0 && <Card className="p-10 text-center text-muted-foreground text-sm">No invoices found.</Card>}
             {filteredR.map((r) => (
               <Card key={r.id} className="p-4 md:p-5 hover:shadow-md transition-shadow">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
@@ -239,7 +239,7 @@ export default function Finanzen() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="font-mono text-sm text-muted-foreground">{r.nummer}</span>
                       <StatusBadge status={r.status} />
-                      {r.automatisch && <Badge variant="outline" className="font-normal text-primary border-primary/30"><Zap className="w-3 h-3 mr-1" />Automatisch</Badge>}
+                      {r.automatisch && <Badge variant="outline" className="font-normal text-primary border-primary/30"><Zap className="w-3 h-3 mr-1" />Automatic</Badge>}
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-foreground text-sm md:text-base">
                       <Building2 className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -247,7 +247,7 @@ export default function Finanzen() {
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs md:text-sm text-muted-foreground">
                       <span className="flex items-center gap-1.5"><CalendarDays className="w-4 h-4 flex-shrink-0" />{formatDatum(r.datum)}</span>
-                      <span>Fällig am {formatDatum(r.faellig_am)}</span>
+                      <span>Due {formatDatum(r.faellig_am)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -274,10 +274,10 @@ export default function Finanzen() {
         </div>
       );
 
-      case "auszahlungen": return <FinanzenPlaceholder titel="Auszahlungen" beschreibung="Verwalten Sie Ihre Auszahlungen und Bankkontodaten. Kommt bald." />;
-      case "gebuehren": return <FinanzenPlaceholder titel="Gebühren" beschreibung="Übersicht über Plattform- und Transaktionsgebühren. Kommt bald." />;
-      case "abonnemente": return <FinanzenPlaceholder titel="Abonnemente" beschreibung="Verwalten Sie Ihr MeisterFlow-Abo und Add-ons. Kommt bald." />;
-      case "einstellungen": return <FinanzenPlaceholder titel="Finanz-Einstellungen" beschreibung="Zahlungsarten, Auszahlungskonto, Mahnungsregeln und Rechnungslayout. Kommt bald." />;
+      case "auszahlungen": return <FinanzenPlaceholder titel="Payouts" beschreibung="Manage your payouts and bank account details. Coming soon." />;
+      case "gebuehren": return <FinanzenPlaceholder titel="Fees" beschreibung="Overview of platform and transaction fees. Coming soon." />;
+      case "abonnemente": return <FinanzenPlaceholder titel="Subscriptions" beschreibung="Manage your MeisterFlow subscription and add-ons. Coming soon." />;
+      case "einstellungen": return <FinanzenPlaceholder titel="Finance Settings" beschreibung="Payment methods, payout account, reminder rules, and invoice layout. Coming soon." />;
       default: return null;
     }
   };
@@ -287,9 +287,9 @@ export default function Finanzen() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground">Finanzen</h1>
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground">Finance</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            {rechnungen.length} Rechnungen · {offerten.length} Offerten · {formatCHF(offenerBetrag)} offen
+            {rechnungen.length} invoices · {offerten.length} quotes · {formatCHF(offenerBetrag)} open
           </p>
         </div>
       </div>

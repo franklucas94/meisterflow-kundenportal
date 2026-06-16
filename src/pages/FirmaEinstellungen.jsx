@@ -74,7 +74,7 @@ export default function FirmaEinstellungen() {
     await base44.entities.Firma.update(firma.id, { ...form, logo_url });
     qc.invalidateQueries({ queryKey: ["firma"] });
     setSaving(false);
-    toast({ title: "Gespeichert", description: "Ihre Firmendaten wurden aktualisiert." });
+    toast({ title: "Saved", description: "Your company data has been updated." });
   };
 
   const toggleDienstleistung = (dl) => {
@@ -97,68 +97,68 @@ export default function FirmaEinstellungen() {
 
   return (
     <div>
-      <PageHeader title="Firma & Integrationen" subtitle="Verwalten Sie Ihre Firmendaten und verbundene Systeme">
+      <PageHeader title="Company & Integrations" subtitle="Manage your company data and connected systems">
         <Button onClick={speichern} disabled={saving}>
           <Save className="w-4 h-4 mr-1.5" />
-          {saving ? "Speichern…" : "Änderungen speichern"}
+          {saving ? "Saving…" : "Save Changes"}
         </Button>
       </PageHeader>
 
       <Tabs defaultValue="firma">
         <TabsList className="mb-6">
-          <TabsTrigger value="firma" className="gap-1.5"><Building2 className="w-4 h-4" /> Firmendaten</TabsTrigger>
+          <TabsTrigger value="firma" className="gap-1.5"><Building2 className="w-4 h-4" /> Company Data</TabsTrigger>
           <TabsTrigger value="website" className="gap-1.5"><Globe className="w-4 h-4" /> Website</TabsTrigger>
-          <TabsTrigger value="integrationen" className="gap-1.5"><Check className="w-4 h-4" /> Integrationen</TabsTrigger>
-          <TabsTrigger value="dienstleistungen" className="gap-1.5"><Briefcase className="w-4 h-4" /> Dienstleistungen</TabsTrigger>
-          <TabsTrigger value="bewertung" className="gap-1.5"><Star className="w-4 h-4" /> Bewertung</TabsTrigger>
+          <TabsTrigger value="integrationen" className="gap-1.5"><Check className="w-4 h-4" /> Integrations</TabsTrigger>
+          <TabsTrigger value="dienstleistungen" className="gap-1.5"><Briefcase className="w-4 h-4" /> Services</TabsTrigger>
+          <TabsTrigger value="bewertung" className="gap-1.5"><Star className="w-4 h-4" /> Reviews</TabsTrigger>
         </TabsList>
 
         {/* ──── FIRMENDATEN ──── */}
         <TabsContent value="firma">
           <Card className="p-6 space-y-5">
             <div className="space-y-1.5">
-              <Label>Firmenname</Label>
+              <Label>Company Name</Label>
               <Input value={form.firmenname || ""} onChange={f("firmenname")} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label>Ansprechpartner</Label>
+                <Label>Contact Person</Label>
                 <Input value={form.ansprechpartner || ""} onChange={f("ansprechpartner")} />
               </div>
               <div className="space-y-1.5">
-                <Label>Telefon</Label>
+                <Label>Phone</Label>
                 <Input value={form.telefon || ""} onChange={f("telefon")} />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>E-Mail</Label>
+              <Label>Email</Label>
               <Input type="email" value={form.email || ""} onChange={f("email")} />
             </div>
             <div className="space-y-1.5">
-              <Label>Adresse</Label>
+              <Label>Address</Label>
               <Input value={form.adresse || ""} onChange={f("adresse")} />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label>PLZ</Label>
+                <Label>ZIP</Label>
                 <Input value={form.plz || ""} onChange={f("plz")} />
               </div>
               <div className="col-span-2 space-y-1.5">
-                <Label>Ort</Label>
+                <Label>City</Label>
                 <Input value={form.ort || ""} onChange={f("ort")} />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>UID Nummer</Label>
+              <Label>UID Number</Label>
               <Input value={form.uid_nummer || ""} onChange={f("uid_nummer")} placeholder="CHE-123.456.789" />
             </div>
             <div className="space-y-1.5">
-              <Label>Rechnungsadresse (falls abweichend)</Label>
+              <Label>Billing Address (if different)</Label>
               <Textarea value={form.rechnungsadresse || ""} onChange={f("rechnungsadresse")} className="h-16" />
             </div>
 
             <div className="space-y-2">
-              <Label>Firmenlogo</Label>
+              <Label>Company Logo</Label>
               <div
                 onClick={() => logoInputRef.current?.click()}
                 className={cn(
@@ -174,8 +174,8 @@ export default function FirmaEinstellungen() {
                       <Upload className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-medium">Logo hochladen</p>
-                      <p className="text-xs text-muted-foreground">PNG, JPG oder SVG · max. 2 MB</p>
+                      <p className="text-sm font-medium">Upload Logo</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG or SVG · max. 2 MB</p>
                     </div>
                   </>
                 )}
@@ -184,7 +184,7 @@ export default function FirmaEinstellungen() {
               {logoPreview && (
                 <Button type="button" variant="outline" size="sm"
                   onClick={() => { setLogoFile(null); setLogoPreview(null); setForm({ ...form, logo_url: "" }); }}>
-                  <X className="w-3.5 h-3.5 mr-1" /> Logo entfernen
+                  <X className="w-3.5 h-3.5 mr-1" /> Remove Logo
                 </Button>
               )}
             </div>
@@ -196,17 +196,17 @@ export default function FirmaEinstellungen() {
           <Card className="p-6 space-y-5">
             <div className="space-y-1.5">
               <Label>Domain</Label>
-              <Input value={form.domain || ""} onChange={f("domain")} placeholder="www.meinefirma.ch" />
+              <Input value={form.domain || ""} onChange={f("domain")} placeholder="www.mycompany.com" />
             </div>
             <div className="space-y-1.5">
-              <Label>Hosting-Zugang</Label>
-              <Input value={form.hosting_zugang || ""} onChange={f("hosting_zugang")} placeholder="z. B. Hostpoint, Infomaniak…" />
+              <Label>Hosting Access</Label>
+              <Input value={form.hosting_zugang || ""} onChange={f("hosting_zugang")} placeholder="e.g. Hostpoint, Infomaniak…" />
             </div>
             <div className="rounded-xl border border-border overflow-hidden divide-y divide-border">
               {[
-                { key: "hat_website", label: "Bestehende Website vorhanden" },
-                { key: "hat_google_analytics", label: "Google Analytics vorhanden" },
-                { key: "hat_search_console", label: "Google Search Console vorhanden" },
+                { key: "hat_website", label: "Existing website available" },
+                { key: "hat_google_analytics", label: "Google Analytics available" },
+                { key: "hat_search_console", label: "Google Search Console available" },
               ].map(({ key, label }) => (
                 <div key={key} className="flex items-center justify-between p-4">
                   <p className="text-sm font-medium text-foreground">{label}</p>
@@ -224,7 +224,7 @@ export default function FirmaEinstellungen() {
             <Card className="p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <CalendarDays className="w-4 h-4 text-primary" />
-                <h3 className="font-heading font-bold text-sm">Kalender</h3>
+                <h3 className="font-heading font-bold text-sm">Calendar</h3>
                 {form.kalender_verbunden && <StatusBadge status="aktiv" />}
               </div>
               <KalenderSync />
@@ -248,9 +248,9 @@ export default function FirmaEinstellungen() {
               <div className="flex items-center gap-2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive" className="w-4 h-4" />
                 <h3 className="font-heading font-bold text-sm">Google Drive</h3>
-                <span className="text-xs text-muted-foreground">PDFs automatisch archivieren</span>
+                <span className="text-xs text-muted-foreground">Auto-archive PDFs</span>
               </div>
-              <p className="text-sm text-muted-foreground">Generierte Rechnungen und Offerten werden automatisch in Ihrem Google Drive unter <strong>MeisterFlow/</strong> gespeichert.</p>
+              <p className="text-sm text-muted-foreground">Generated invoices and quotes are automatically saved to your Google Drive under <strong>MeisterFlow/</strong>.</p>
               <GoogleDriveSync />
             </Card>
 
@@ -262,8 +262,8 @@ export default function FirmaEinstellungen() {
                 {form.google_verbunden && <StatusBadge status="aktiv" />}
               </div>
               <IntegrationKarte
-                name="Google Konto"
-                beschreibung="Unternehmensprofil · Bewertungen · Analytics · Search Console"
+                name="Google Account"
+                beschreibung="Business Profile · Reviews · Analytics · Search Console"
                 icon={<img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="w-6 h-6" />}
                 verbunden={form.google_verbunden}
                 selected={form.google_verbunden}
@@ -280,7 +280,7 @@ export default function FirmaEinstellungen() {
               </div>
               <IntegrationKarte
                 name="WhatsApp Business"
-                beschreibung="Terminbestätigungen · Offerten · Erinnerungen"
+                beschreibung="Appointment confirmations · Quotes · Reminders"
                 icon={<MessageCircle className="w-6 h-6 text-emerald-600" />}
                 verbunden={form.whatsapp_verbunden}
                 selected={form.whatsapp_verbunden}
@@ -288,7 +288,7 @@ export default function FirmaEinstellungen() {
               />
               {form.whatsapp_verbunden && (
                 <div className="space-y-1.5">
-                  <Label>WhatsApp Nummer</Label>
+                  <Label>WhatsApp Number</Label>
                   <Input value={form.whatsapp_nummer || ""} onChange={f("whatsapp_nummer")} placeholder="+41 79 123 45 67" />
                 </div>
               )}
@@ -302,12 +302,12 @@ export default function FirmaEinstellungen() {
                 {form.sms_verbunden && <StatusBadge status="aktiv" />}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <IntegrationKarte name="Eigene Nummer" beschreibung="Ihre Geschäftsnummer"
+                <IntegrationKarte name="Own Number" beschreibung="Your business number"
                   icon={<MessageSquare className="w-6 h-6 text-violet-600" />}
                   selected={form.sms_verbunden && !form.sms_meisterflow_nummer}
                   verbunden={form.sms_verbunden && !form.sms_meisterflow_nummer}
                   onSelect={() => setForm({ ...form, sms_verbunden: true, sms_meisterflow_nummer: false })} />
-                <IntegrationKarte name="MeisterFlow Nummer" beschreibung="Dedizierte CH-Nummer"
+                <IntegrationKarte name="MeisterFlow Number" beschreibung="Dedicated CH number"
                   icon={<div className="w-6 h-6 rounded bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center"><MessageSquare className="w-3.5 h-3.5 text-white" /></div>}
                   selected={form.sms_meisterflow_nummer}
                   verbunden={form.sms_meisterflow_nummer}
@@ -315,7 +315,7 @@ export default function FirmaEinstellungen() {
               </div>
               {form.sms_verbunden && !form.sms_meisterflow_nummer && (
                 <div className="space-y-1.5">
-                  <Label>SMS-Nummer</Label>
+                  <Label>SMS Number</Label>
                   <Input value={form.sms_eigene_nummer || ""} onChange={f("sms_eigene_nummer")} placeholder="+41 44 123 45 67" />
                 </div>
               )}
@@ -325,21 +325,21 @@ export default function FirmaEinstellungen() {
             <Card className="p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 7c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2z" fill="#6772e5"/><rect width="24" height="24" rx="4" fill="#6772e5"/><path d="M10.5 8.5c1.1-.5 2.8-.3 3.5.8.5.8.3 1.9-.5 2.4l-2.2 1.3c-.8.5-1 1.5-.5 2.2.4.6 1.3.9 2 .6" stroke="white" strokeWidth="1.5" strokeLinecap="round"/><path d="M8 12h8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                <h3 className="font-heading font-bold text-sm">Stripe Zahlung</h3>
+                <h3 className="font-heading font-bold text-sm">Stripe Payment</h3>
                 {form.stripe_zahlungslink && <StatusBadge status="aktiv" />}
               </div>
               <p className="text-sm text-muted-foreground">
-                Hinterlegen Sie Ihren Stripe-Zahlungslink, damit Kunden Rechnungen direkt online bezahlen können.
-                {" "}<a href="https://dashboard.stripe.com/register" target="_blank" rel="noopener noreferrer" className="text-primary underline">Noch kein Stripe-Konto? Jetzt registrieren →</a>
+                Add your Stripe payment link so customers can pay invoices directly online.
+                {" "}<a href="https://dashboard.stripe.com/register" target="_blank" rel="noopener noreferrer" className="text-primary underline">No Stripe account yet? Register now →</a>
               </p>
               <div className="space-y-1.5">
-                <Label>Stripe Zahlungslink</Label>
+                <Label>Stripe Payment Link</Label>
                 <Input
                   value={form.stripe_zahlungslink || ""}
                   onChange={f("stripe_zahlungslink")}
                   placeholder="https://buy.stripe.com/..."
                 />
-                <p className="text-xs text-muted-foreground">Erstellen Sie einen Zahlungslink in Ihrem <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noopener noreferrer" className="text-primary underline">Stripe Dashboard</a> und fügen Sie ihn hier ein.</p>
+                <p className="text-xs text-muted-foreground">Create a payment link in your <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noopener noreferrer" className="text-primary underline">Stripe Dashboard</a> and paste it here.</p>
               </div>
             </Card>
 
@@ -366,7 +366,7 @@ export default function FirmaEinstellungen() {
               </div>
               {form.email_verbunden && (
                 <div className="space-y-1.5">
-                  <Label>E-Mail-Adresse</Label>
+                  <Label>Email Address</Label>
                   <Input type="email" value={form.email_verbunden_adresse || ""} onChange={f("email_verbunden_adresse")} />
                 </div>
               )}
@@ -401,10 +401,10 @@ export default function FirmaEinstellungen() {
               <Input
                 value={form.eigene_dienstleistung || ""}
                 onChange={(e) => setForm({ ...form, eigene_dienstleistung: e.target.value })}
-                placeholder="Eigene Dienstleistung hinzufügen…"
+                placeholder="Add custom service…"
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), eigeneHinzufuegen())}
               />
-              <Button type="button" variant="outline" onClick={eigeneHinzufuegen}>Hinzufügen</Button>
+              <Button type="button" variant="outline" onClick={eigeneHinzufuegen}>Add</Button>
             </div>
           </Card>
         </TabsContent>
@@ -413,10 +413,10 @@ export default function FirmaEinstellungen() {
         <TabsContent value="bewertung">
           <Card className="p-6 space-y-5">
             <div className="space-y-1.5">
-              <Label>Google Bewertungslink</Label>
+              <Label>Google Review Link</Label>
               <Input value={form.google_bewertungslink || ""} onChange={f("google_bewertungslink")}
                 placeholder="https://g.page/r/…/review" />
-              <p className="text-xs text-muted-foreground">Finden Sie diesen Link in Ihrem Google Business Profil unter «Bewertungen erhalten».</p>
+              <p className="text-xs text-muted-foreground">Find this link in your Google Business Profile under "Get reviews".</p>
             </div>
             {form.google_bewertungslink && (
               <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
@@ -424,8 +424,8 @@ export default function FirmaEinstellungen() {
                   <Check className="w-4 h-4 text-white" strokeWidth={3} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-emerald-700">Bewertungssystem aktiv</p>
-                  <p className="text-xs text-emerald-600">Automatische Bewertungsanfragen werden über diesen Link versendet.</p>
+                  <p className="text-sm font-semibold text-emerald-700">Review system active</p>
+                  <p className="text-xs text-emerald-600">Automatic review requests will be sent via this link.</p>
                 </div>
               </div>
             )}

@@ -16,7 +16,6 @@ import TerminEditDialog from "@/components/forms/TerminEditDialog";
 import OfferteDialog from "@/components/forms/OfferteDialog";
 import { Plus, Building2, MapPin, Bell, BellOff, Trash2, FileText } from "lucide-react";
 import { format, isToday, isTomorrow, isThisWeek, isPast, parseISO, startOfDay, getISOWeek } from "date-fns";
-import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useState as useLocalState } from "react";
 
@@ -38,17 +37,17 @@ const OutlookIcon = () => (
 );
 
 const STATUS_LABELS = {
-  geplant: "Geplant",
-  bestaetigt: "Bestätigt",
-  abgeschlossen: "Abgeschlossen",
-  abgesagt: "Abgesagt",
+  geplant: "Planned",
+  bestaetigt: "Confirmed",
+  abgeschlossen: "Completed",
+  abgesagt: "Cancelled",
 };
 
 function datumTitel(d) {
   const date = parseISO(d);
-  if (isToday(date)) return "Heute";
-  if (isTomorrow(date)) return "Morgen";
-  return format(date, "EEEE, dd. MMMM yyyy", { locale: de });
+  if (isToday(date)) return "Today";
+  if (isTomorrow(date)) return "Tomorrow";
+  return format(date, "EEEE, MMMM do, yyyy");
 }
 
 function istVergangen(datum, status) {
@@ -95,7 +94,7 @@ export default function Termine() {
 
   // Mini-Zusammenfassung
   const heute = termine.filter((t) => isToday(parseISO(t.datum))).length;
-  const dieseWoche = termine.filter((t) => isThisWeek(parseISO(t.datum), { locale: de }) && !isToday(parseISO(t.datum))).length;
+  const dieseWoche = termine.filter((t) => isThisWeek(parseISO(t.datum)) && !isToday(parseISO(t.datum))).length;
   const naechsteWoche = termine.filter((t) => {
     const d = parseISO(t.datum);
     const now = new Date();
@@ -114,35 +113,35 @@ export default function Termine() {
     <div>
       <PageHeader title="Termine">
         <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => base44.connectors.connectAppUser("6a2a68df83a79531c222b4a6").then(url => window.open(url, "_blank"))}>
-          <GCalIcon /> Google Kalender
+          <GCalIcon /> Google Calendar
         </Button>
         <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => base44.connectors.connectAppUser("6a2a5b27725e857800ca8e5d").then(url => window.open(url, "_blank"))}>
           <OutlookIcon /> Outlook
         </Button>
         <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Neuer Termin
+          <Plus className="w-4 h-4 mr-1.5" /> New Appointment
         </Button>
       </PageHeader>
 
       {/* Mini-Zusammenfassung */}
       <div className="flex gap-4 mb-6 text-sm">
         <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{heute}</span> Heute
+          <span className="font-semibold text-foreground">{heute}</span> Today
         </span>
         <span className="text-muted-foreground">·</span>
         <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{dieseWoche}</span> Diese Woche
+          <span className="font-semibold text-foreground">{dieseWoche}</span> This Week
         </span>
         <span className="text-muted-foreground">·</span>
         <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{naechsteWoche}</span> Nächste Woche
+          <span className="font-semibold text-foreground">{naechsteWoche}</span> Next Week
         </span>
       </div>
 
       <div className="space-y-7">
         {termine.length === 0 && (
           <Card className="p-10 text-center text-muted-foreground text-sm">
-            Noch keine Termine geplant.
+            No appointments scheduled yet.
           </Card>
         )}
         {Object.entries(gruppen).map(([datum, eintraege]) => {
@@ -162,9 +161,9 @@ export default function Termine() {
                   {datumTitel(datum)}
                 </h2>
                 {istHeute && (
-                  <span className="text-[11px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                    Heute
-                  </span>
+                <span className="text-[11px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                  Today
+                </span>
                 )}
               </div>
 
@@ -236,7 +235,7 @@ export default function Termine() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            title={t.erinnerung ? "Erinnerung aktiv" : "Keine Erinnerung"}
+                            title={t.erinnerung ? "Reminder active" : "No reminder"}
                             className={t.erinnerung ? "text-primary" : "text-muted-foreground"}
                             onClick={() => update.mutate({ id: t.id, data: { erinnerung: !t.erinnerung } })}
                           >

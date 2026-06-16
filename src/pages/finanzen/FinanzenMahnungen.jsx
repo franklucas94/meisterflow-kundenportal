@@ -10,10 +10,10 @@ import { differenceInDays } from "date-fns";
 function getMahnstufe(faelligAm) {
   if (!faelligAm) return { stufe: 0, label: "–", color: "text-muted-foreground" };
   const tage = differenceInDays(new Date(), new Date(faelligAm));
-  if (tage < 7) return { stufe: 0, label: "Keine Mahnung", color: "text-muted-foreground" };
-  if (tage < 14) return { stufe: 1, label: "1. Mahnung", color: "text-amber-600" };
-  if (tage < 30) return { stufe: 2, label: "2. Mahnung", color: "text-orange-600" };
-  return { stufe: 3, label: "Letzte Mahnung", color: "text-red-600" };
+  if (tage < 7) return { stufe: 0, label: "No reminder", color: "text-muted-foreground" };
+  if (tage < 14) return { stufe: 1, label: "1st Reminder", color: "text-amber-600" };
+  if (tage < 30) return { stufe: 2, label: "2nd Reminder", color: "text-orange-600" };
+  return { stufe: 3, label: "Final Reminder", color: "text-red-600" };
 }
 
 export default function FinanzenMahnungen() {
@@ -34,9 +34,9 @@ export default function FinanzenMahnungen() {
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "1. Mahnung", count: faellig.filter((r) => r.mahnstufe.stufe === 1).length, color: "text-amber-600", bg: "bg-amber-50" },
-          { label: "2. Mahnung", count: faellig.filter((r) => r.mahnstufe.stufe === 2).length, color: "text-orange-600", bg: "bg-orange-50" },
-          { label: "Letzte Mahnung", count: faellig.filter((r) => r.mahnstufe.stufe === 3).length, color: "text-red-600", bg: "bg-red-50" },
+          { label: "1st Reminder", count: faellig.filter((r) => r.mahnstufe.stufe === 1).length, color: "text-amber-600", bg: "bg-amber-50" },
+          { label: "2nd Reminder", count: faellig.filter((r) => r.mahnstufe.stufe === 2).length, color: "text-orange-600", bg: "bg-orange-50" },
+          { label: "Final Reminder", count: faellig.filter((r) => r.mahnstufe.stufe === 3).length, color: "text-red-600", bg: "bg-red-50" },
         ].map((k) => (
           <Card key={k.label} className="p-4 text-center">
             <div className={`text-2xl font-heading font-extrabold ${k.color}`}>{k.count}</div>
@@ -47,11 +47,11 @@ export default function FinanzenMahnungen() {
 
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-heading font-bold text-sm">Mahnungsübersicht</h3>
-          <span className="text-sm font-semibold text-red-600">{formatCHF(gesamtBetrag)} ausstehend</span>
+          <h3 className="font-heading font-bold text-sm">Reminder Overview</h3>
+          <span className="text-sm font-semibold text-red-600">{formatCHF(gesamtBetrag)} outstanding</span>
         </div>
         {faellig.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">Keine offenen Mahnungen. 🎉</p>
+          <p className="text-sm text-muted-foreground py-6 text-center">No open reminders. 🎉</p>
         ) : (
           <div className="space-y-3">
             {faellig.map((r) => (
@@ -65,7 +65,7 @@ export default function FinanzenMahnungen() {
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
                       <CalendarDays className="w-3 h-3" />
-                      Fällig am {formatDatum(r.faellig_am)}
+                      Due {formatDatum(r.faellig_am)}
                     </div>
                   </div>
                 </div>
@@ -81,8 +81,8 @@ export default function FinanzenMahnungen() {
 
       <Card className="p-5 border-dashed border-2 border-muted-foreground/20">
         <div className="text-center py-4">
-          <div className="text-sm font-semibold text-muted-foreground mb-1">Automatische Mahnungen</div>
-          <p className="text-xs text-muted-foreground">Automatischer Mahnungsversand per E-Mail wird in Kürze verfügbar sein.</p>
+          <div className="text-sm font-semibold text-muted-foreground mb-1">Automatic Reminders</div>
+          <p className="text-xs text-muted-foreground">Automatic reminder sending via email will be available soon.</p>
         </div>
       </Card>
     </div>

@@ -32,9 +32,9 @@ export default function Website() {
 
   return (
     <div>
-      <PageHeader title="Website" subtitle="Ihre Website verwalten und Anpassungen anfragen">
+      <PageHeader title="Website" subtitle="Manage your website and request changes">
         <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Anpassung anfragen
+          <Plus className="w-4 h-4 mr-1.5" /> Request Change
         </Button>
       </PageHeader>
 
@@ -42,16 +42,16 @@ export default function Website() {
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
           <TabsTrigger value="status">Status</TabsTrigger>
           <TabsTrigger value="anfragen">
-            Änderungsanfragen
+            Change Requests
             {anfragen.filter(a => a.status === "offen").length > 0 && (
               <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
                 {anfragen.filter(a => a.status === "offen").length}
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="seo">SEO & Sichtbarkeit</TabsTrigger>
-          <TabsTrigger value="dateien">Dateien</TabsTrigger>
-          <TabsTrigger value="verlauf">Änderungsverlauf</TabsTrigger>
+          <TabsTrigger value="seo">SEO & Visibility</TabsTrigger>
+          <TabsTrigger value="dateien">Files</TabsTrigger>
+          <TabsTrigger value="verlauf">Change History</TabsTrigger>
         </TabsList>
 
         <TabsContent value="status">
