@@ -229,7 +229,7 @@ export default function Termine() {
                               onClick={() => handleOfferteErstellen(t)}
                             >
                               <FileText className="w-3.5 h-3.5" />
-                              Offerte
+                              Quote
                             </Button>
                           )}
                           <Button
