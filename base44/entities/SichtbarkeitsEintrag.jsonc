@@ -1,0 +1,56 @@
+{
+  "name": "SichtbarkeitsEintrag",
+  "type": "object",
+  "properties": {
+    "firma_id": {
+      "type": "string",
+      "description": "Link to the company this entry belongs to"
+    },
+    "typ": {
+      "type": "string",
+      "enum": [
+        "region",
+        "dienstleistung"
+      ],
+      "default": "region"
+    },
+    "name": {
+      "type": "string"
+    },
+    "suchbegriff": {
+      "type": "string",
+      "description": "Search term used for the 'View on Google' link, e.g. 'Real Estate Agent Zurich'"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "gefunden",
+        "im_aufbau",
+        "geplant"
+      ],
+      "default": "geplant"
+    },
+    "ist_aktuelle_massnahme": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show this entry in the 'Currently Working On' section"
+    },
+    "massnahme_text": {
+      "type": "string",
+      "description": "Custom text shown in the 'Currently Working On' section"
+    },
+    "neu_gefunden_am": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this entry was newly found on Google"
+    },
+    "reihenfolge": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "typ"
+  ]
+}

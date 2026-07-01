@@ -49,7 +49,7 @@ export default function Website() {
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="seo">SEO & Visibility</TabsTrigger>
+          <TabsTrigger value="seo">Progress Cockpit</TabsTrigger>
           <TabsTrigger value="dateien">Files</TabsTrigger>
           <TabsTrigger value="verlauf">Change History</TabsTrigger>
         </TabsList>

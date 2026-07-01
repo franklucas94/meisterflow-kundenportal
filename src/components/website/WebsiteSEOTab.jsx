@@ -1,74 +1,71 @@
 import React from "react";
-import { Card } from "@/components/ui/card";
-import { CheckCircle2, XCircle, BarChart2, Search, Building2 } from "lucide-react";
-
-const VerbindungsKarte = ({ icon: Icon, titel, beschreibung, verbunden, hinweis }) => (
-  <Card className="p-5">
-    <div className="flex items-start gap-4">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${verbunden ? "bg-emerald-50" : "bg-slate-100"}`}>
-        <Icon className={`w-5 h-5 ${verbunden ? "text-emerald-600" : "text-slate-400"}`} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-foreground">{titel}</span>
-          {verbunden ? (
-            <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Verbunden
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-              <XCircle className="w-3.5 h-3.5" /> Nicht verbunden
-            </span>
-          )}
-        </div>
-        <p className="text-sm text-muted-foreground mt-0.5">{beschreibung}</p>
-        {!verbunden && hinweis && (
-          <p className="text-xs text-muted-foreground mt-2 bg-muted rounded-lg px-3 py-2">{hinweis}</p>
-        )}
-      </div>
-    </div>
-  </Card>
-);
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
+import { MapPin, Wrench } from "lucide-react";
+import StatusTabelle from "@/components/cockpit/StatusTabelle";
+import AktuelleMassnahmenKarte from "@/components/cockpit/AktuelleMassnahmenKarte";
+import NeuGefundenKarte from "@/components/cockpit/NeuGefundenKarte";
+import FortschrittUebersicht from "@/components/cockpit/FortschrittUebersicht";
+import NaechsteZieleKarte from "@/components/cockpit/NaechsteZieleKarte";
 
 export default function WebsiteSEOTab({ firma }) {
+  const { data: eintraege = [] } = useQuery({
+    queryKey: ["sichtbarkeit", firma?.id],
+    queryFn: () => base44.entities.SichtbarkeitsEintrag.filter({ firma_id: firma?.id }, "reihenfolge"),
+    enabled: !!firma?.id,
+  });
+
+  const regionen = eintraege.filter((e) => e.typ === "region");
+  const dienstleistungen = eintraege.filter((e) => e.typ === "dienstleistung");
+  const massnahmen = eintraege.filter((e) => e.ist_aktuelle_massnahme);
+
+  const dreissigTageAlt = new Date();
+  dreissigTageAlt.setDate(dreissigTageAlt.getDate() - 30);
+  const neuGefunden = eintraege.filter((e) => e.neu_gefunden_am && new Date(e.neu_gefunden_am) >= dreissigTageAlt);
+
+  const diesenMonat = new Date().toISOString().slice(0, 7);
+  const neuDiesenMonat = eintraege.filter((e) => (e.neu_gefunden_am || "").startsWith(diesenMonat)).length;
+
+  const stats = [
+    { label: "Regions Found", value: `${regionen.filter((r) => r.status === "gefunden").length} / ${regionen.length}` },
+    { label: "Services Found", value: `${dienstleistungen.filter((d) => d.status === "gefunden").length} / ${dienstleistungen.length}` },
+    { label: "Active Optimizations", value: eintraege.filter((e) => e.status === "im_aufbau").length },
+    { label: "New This Month", value: neuDiesenMonat },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-1">SEO & Sichtbarkeit</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Verbinden Sie Ihre Google-Dienste, um Ihre Online-Sichtbarkeit zu messen und zu verbessern.
-        </p>
-        <div className="grid md:grid-cols-3 gap-4">
-          <VerbindungsKarte
-            icon={Building2}
-            titel="Google Unternehmensprofil"
-            beschreibung="Ihr Profil in Google Maps und der Google-Suche."
-            verbunden={!!firma?.google_verbunden}
-            hinweis="Verbinden Sie Ihr Google-Konto unter Firma → Einstellungen."
-          />
-          <VerbindungsKarte
-            icon={BarChart2}
-            titel="Google Analytics"
-            beschreibung="Besucher-Statistiken und Nutzerverhalten auf Ihrer Website."
-            verbunden={!!firma?.hat_google_analytics}
-            hinweis="Google Analytics wird durch Ihr MeisterFlow-Team eingerichtet."
-          />
-          <VerbindungsKarte
-            icon={Search}
-            titel="Google Search Console"
-            beschreibung="Suchranking, Klicks und indexierte Seiten."
-            verbunden={!!firma?.hat_search_console}
-            hinweis="Die Search Console wird durch Ihr MeisterFlow-Team eingerichtet."
-          />
-        </div>
+        <h3 className="font-heading font-semibold text-foreground mb-1">Progress Cockpit</h3>
+        <p className="text-sm text-muted-foreground">Your growth on Google – simple and clear.</p>
       </div>
 
-      <Card className="p-5 bg-accent/40 border-accent">
-        <p className="text-sm text-accent-foreground font-medium mb-1">Möchten Sie etwas ändern?</p>
-        <p className="text-sm text-muted-foreground">
-          Für Änderungen an SEO-Einstellungen, Google-Verbindungen oder Weiteres erstellen Sie eine Änderungsanfrage im Tab <strong>Änderungsanfragen</strong>.
-        </p>
-      </Card>
+      <FortschrittUebersicht stats={stats} />
+
+      <div className="grid lg:grid-cols-2 gap-4">
+        <StatusTabelle
+          titel="Regions"
+          icon={MapPin}
+          beschreibung="See at a glance where your website is already visible and where we're currently expanding your reach."
+          eintraege={regionen}
+        />
+        <StatusTabelle
+          titel="Services"
+          icon={Wrench}
+          beschreibung="Track which services you're already found for on Google and what's optimized next."
+          eintraege={dienstleistungen}
+        />
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-4">
+        <AktuelleMassnahmenKarte eintraege={massnahmen} />
+        <NeuGefundenKarte eintraege={neuGefunden} />
+      </div>
+
+      <NaechsteZieleKarte
+        regionen={regionen.filter((r) => r.status === "geplant")}
+        dienstleistungen={dienstleistungen.filter((d) => d.status === "geplant")}
+      />
     </div>
   );
 }
